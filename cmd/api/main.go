@@ -6,12 +6,13 @@ import (
 
     "github.com/gin-gonic/gin"
     "github.com/golang-migrate/migrate/v4"
-    _ "github.com/golang-migrate/migrate/v4/database/postgres"
-    _ "github.com/golang-migrate/migrate/v4/source/file"
+    "github.com/golang-migrate/migrate/v4/database/postgres"
+    "github.com/golang-migrate/migrate/v4/source/file"
     "gorm.io/driver/postgres"
     "gorm.io/gorm"
-
     "todolist/internal/handler"
+    "todolist/internal/domain"
+
     postgres_repo "todolist/internal/repository/postgres"
     "todolist/internal/service"
 )
@@ -33,6 +34,10 @@ func main() {
     db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
     if err != nil {
         log.Fatalf("database connection failed: %v", err)
+    }
+
+    if err := db.AutoMigrate(&domain.User{}, &domain.Category{}, &domain.Task{}); err != nil {
+        log.Fatalf("auto migrate failed: %v", err)
     }
 
     jwtSecret := os.Getenv("JWT_SECRET")
