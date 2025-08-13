@@ -5,11 +5,14 @@ import (
     "os"
 
     "github.com/gin-gonic/gin"
+    "github.com/golang-migrate/migrate/v4"
+    "github.com/golang-migrate/migrate/v4/database/postgres"
+    "github.com/golang-migrate/migrate/v4/source/file"
     "gorm.io/driver/postgres"
     "gorm.io/gorm"
-
     "todolist/internal/handler"
     "todolist/internal/domain"
+
     postgres_repo "todolist/internal/repository/postgres"
     "todolist/internal/service"
 )
@@ -19,10 +22,20 @@ func main() {
     if dsn == "" {
         dsn = "postgres://postgres:postgres@localhost:5432/todolist?sslmode=disable"
     }
+
+    m, err := migrate.New("file://migrations", dsn)
+    if err != nil {
+        log.Fatalf("migrate init failed: %v", err)
+    }
+    if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+        log.Fatalf("migrate up failed: %v", err)
+    }
+
     db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
     if err != nil {
         log.Fatalf("database connection failed: %v", err)
     }
+
     if err := db.AutoMigrate(&domain.User{}, &domain.Category{}, &domain.Task{}); err != nil {
         log.Fatalf("auto migrate failed: %v", err)
     }
