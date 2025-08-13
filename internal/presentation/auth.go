@@ -63,7 +63,19 @@ func (h *AuthHandlers) Login(c *gin.Context) {
 
 func (h *AuthHandlers) Logout(c *gin.Context) {
 	header := c.GetHeader("Authorization")
-	token := strings.TrimPrefix(header, "Bearer ")
-	_ = h.svc.Logout(c.Request.Context(), token)
+	const prefix = "Bearer "
+	if header == "" || !strings.HasPrefix(header, prefix) {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid authorization header"})
+		return
+	}
+	token := strings.TrimSpace(header[len(prefix):])
+	if token == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
+		return
+	}
+	if err := h.svc.Logout(c.Request.Context(), token); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 	c.Status(http.StatusNoContent)
 }

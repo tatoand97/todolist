@@ -3,6 +3,7 @@ package application
 import (
 	"context"
 	"errors"
+	"sync"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -14,8 +15,9 @@ import (
 const defaultAvatar = "https://example.com/default-avatar.png"
 
 type AuthService struct {
-	repo      domain.UserRepository
-	jwtSecret string
+	repo          domain.UserRepository
+	jwtSecret     string
+	invalidTokens sync.Map // map[string]struct{}
 }
 
 func NewAuthService(repo domain.UserRepository, secret string) *AuthService {
@@ -56,6 +58,9 @@ func (s *AuthService) Login(ctx context.Context, username, password string) (str
 }
 
 func (s *AuthService) Logout(ctx context.Context, token string) error {
-	// token invalidation would go here
+	if token == "" {
+		return errors.New("empty token")
+	}
+	s.invalidTokens.Store(token, struct{}{})
 	return nil
 }
