@@ -1,0 +1,459 @@
+openapi: 3.1.0
+info:
+  title: API de Tareas y Categorías (Go)
+  version: "1.0.0"
+  description: |
+    Backend en Go. Endpoints protegidos por JWT (bearerAuth). 
+    Las tareas y categorías son del usuario autenticado. 
+    Si el usuario no carga imagen de perfil al registrarse, se asigna avatar por defecto (lógica de servidor).
+
+servers:
+  - url: https://api.ejemplo.com
+    description: Producción
+  - url: http://localhost:8080
+    description: Desarrollo
+
+tags:
+  - name: Autenticación
+  - name: Usuarios
+  - name: Categorías
+  - name: Tareas
+
+paths:
+  /usuarios:
+    post:
+      tags: [Usuarios]
+      summary: Registro de usuario
+      description: Crea un usuario; si no hay imagen, asigna avatar por defecto.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsuarioRegistro'
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  minLength: 3
+                password:
+                  type: string
+                  minLength: 6
+                profileImage:
+                    type: string
+                    format: binary
+              required: [username, password]
+      responses:
+        '201':
+          description: Usuario creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsuarioPublico'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          description: Conflicto (username no disponible)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /usuarios/iniciar-sesion:
+    post:
+      tags: [Autenticación]
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username: { type: string }
+                password: { type: string }
+      responses:
+        '200':
+          description: Token emitido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: JWT Bearer
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /usuarios/cerrar-sesion:
+    post:
+      tags: [Autenticación]
+      summary: Logout
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Sesión cerrada (token invalidado/rotado)
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /categorias:
+    get:
+      tags: [Categorías]
+      summary: Listar categorías del usuario
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Categoria' }
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags: [Categorías]
+      summary: Crear categoría
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [nombre]
+              properties:
+                nombre: { type: string, minLength: 1 }
+                descripcion: { type: string }
+      responses:
+        '201':
+          description: Creada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Categoria'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /categorias/{id}:
+    get:
+      tags: [Categorías]
+      summary: Obtener categoría por id
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Categoria'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags: [Categorías]
+      summary: Actualizar categoría
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nombre: { type: string }
+                descripcion: { type: string }
+      responses:
+        '200':
+          description: Actualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Categoria'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags: [Categorías]
+      summary: Eliminar categoría
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '204':
+          description: Eliminada
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /tareas:
+    post:
+      tags: [Tareas]
+      summary: Crear tarea
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TareaCrear'
+      responses:
+        '201':
+          description: Creada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tarea'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /tareas/usuario:
+    get:
+      tags: [Tareas]
+      summary: Listar tareas del usuario (con filtros)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: categoriaId
+          in: query
+          schema: { type: string }
+          description: Filtra por categoría
+        - name: estado
+          in: query
+          schema:
+            $ref: '#/components/schemas/EstadoTarea'
+          description: Filtra por estado
+        - name: page
+          in: query
+          schema: { type: integer, minimum: 1, default: 1 }
+          description: Opcional
+        - name: pageSize
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 200, default: 20 }
+          description: Opcional
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: '#/components/schemas/Tarea' }
+                  page:
+                    type: integer
+                  pageSize:
+                    type: integer
+                  total:
+                    type: integer
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /tareas/{id}:
+    get:
+      tags: [Tareas]
+      summary: Obtener tarea por id (propiedad verificada)
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tarea'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags: [Tareas]
+      summary: Actualizar tarea
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TareaActualizar'
+      responses:
+        '200':
+          description: Actualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tarea'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags: [Tareas]
+      summary: Eliminar tarea
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '204':
+          description: Eliminada
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    IdPath:
+      name: id
+      in: path
+      required: true
+      schema: { type: string }
+
+  responses:
+    BadRequest:
+      description: Solicitud inválida
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: No autenticado o token inválido
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Recurso no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+    UsuarioRegistro:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+          minLength: 3
+          description: Debe ser único
+        password:
+          type: string
+          minLength: 6
+        profileImageUrl:
+          type: string
+          format: uri
+          description: Alternativa a subir archivo
+    UsuarioPublico:
+      type: object
+      properties:
+        id: { type: string }
+        username: { type: string }
+        profileImageUrl:
+          type: string
+          format: uri
+        avatarUrl:
+          type: string
+          format: uri
+          description: Asignado por defecto si no hay imagen de perfil
+    Categoria:
+      type: object
+      properties:
+        id: { type: string }
+        nombre: { type: string }
+        descripcion: { type: string }
+        usuarioId:
+          type: string
+          description: Propietario (servidor lo infiere del token)
+    EstadoTarea:
+      type: string
+      enum: [Sin Empezar, Empezada, Finalizada]
+    Tarea:
+      type: object
+      properties:
+        id: { type: string }
+        texto: { type: string }
+        fechaCreacion:
+          type: string
+          format: date-time
+        fechaTentativaFin:
+          type: string
+          format: date-time
+          nullable: true
+        estado:
+          $ref: '#/components/schemas/EstadoTarea'
+        categoriaId: { type: string }
+        usuarioId: { type: string }
+    TareaCrear:
+      type: object
+      required: [texto, idCategoria]
+      properties:
+        texto: { type: string, minLength: 1 }
+        fechaTentativaFin:
+          type: string
+          format: date-time
+          nullable: true
+        idCategoria:
+          type: string
+    TareaActualizar:
+      type: object
+      properties:
+        texto: { type: string }
+        fechaTentativaFin:
+          type: string
+          format: date-time
+          nullable: true
+        estado:
+          $ref: '#/components/schemas/EstadoTarea'
+        idCategoria:
+          type: string
+    Error:
+      type: object
+      properties:
+        code: { type: string }
+        message: { type: string }
+
+security:
+  - bearerAuth: []
+
+x-guidelines:
+  ownership: "El servidor valida que {usuarioId} del recurso coincide con el sujeto del JWT."
+  defaultAvatar: "Si no se provee 'profileImage' ni 'profileImageUrl', asignar avatar por defecto."
