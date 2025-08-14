@@ -1,7 +1,7 @@
 package application
 
 import (
-	"context"
+	stdcontext "context"
 	"errors"
 
 	"todolist/internal/domain"
@@ -21,30 +21,30 @@ func NewTaskService(repo domain.TaskRepository) *TaskService {
 	return &TaskService{repo: repo}
 }
 
-func (s *TaskService) Create(ctx context.Context, t *domain.Task) error {
-	if t.State == "" {
-		t.State = "Sin Empezar"
-	} else if !allowedStates[t.State] {
+func (service *TaskService) Create(requestContext stdcontext.Context, task *domain.Task) error {
+	if task.State == "" {
+		task.State = "Sin Empezar"
+	} else if !allowedStates[task.State] {
 		return errors.New("invalid state")
 	}
-	return s.repo.Create(ctx, t)
+	return service.repo.Create(requestContext, task)
 }
 
-func (s *TaskService) Update(ctx context.Context, t *domain.Task) error {
-	if t.State != "" && !allowedStates[t.State] {
+func (service *TaskService) Update(requestContext stdcontext.Context, task *domain.Task) error {
+	if task.State != "" && !allowedStates[task.State] {
 		return errors.New("invalid state")
 	}
-	return s.repo.Update(ctx, t)
+	return service.repo.Update(requestContext, task)
 }
 
-func (s *TaskService) Delete(ctx context.Context, id uint, userID uint) error {
-	return s.repo.Delete(ctx, id, userID)
+func (service *TaskService) Delete(requestContext stdcontext.Context, id uint, userID uint) error {
+	return service.repo.Delete(requestContext, id, userID)
 }
 
-func (s *TaskService) Get(ctx context.Context, id uint, userID uint) (*domain.Task, error) {
-	return s.repo.Get(ctx, id, userID)
+func (service *TaskService) Get(requestContext stdcontext.Context, id uint, userID uint) (*domain.Task, error) {
+	return service.repo.Get(requestContext, id, userID)
 }
 
-func (s *TaskService) List(ctx context.Context, userID uint, f domain.TaskFilter) ([]domain.Task, error) {
-	return s.repo.List(ctx, userID, f)
+func (service *TaskService) List(requestContext stdcontext.Context, userID uint, filter domain.TaskFilter) ([]domain.Task, error) {
+	return service.repo.List(requestContext, userID, filter)
 }

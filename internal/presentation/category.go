@@ -11,80 +11,80 @@ import (
 )
 
 type CategoryHandlers struct {
-	svc *application.CategoryService
+	service *application.CategoryService
 }
 
-func NewCategoryHandlers(svc *application.CategoryService) *CategoryHandlers {
-	return &CategoryHandlers{svc: svc}
+func NewCategoryHandlers(service *application.CategoryService) *CategoryHandlers {
+	return &CategoryHandlers{service: service}
 }
 
-func getUserID(c *gin.Context) uint {
-	v, _ := c.Get("userID")
-	if id, ok := v.(uint); ok {
-		return id
+func getUserID(context *gin.Context) uint {
+	userIDValue, _ := context.Get("userID")
+	if userID, ok := userIDValue.(uint); ok {
+		return userID
 	}
 	return 0
 }
 
-func (h *CategoryHandlers) Create(c *gin.Context) {
-	var req struct {
+func (handler *CategoryHandlers) Create(context *gin.Context) {
+	var request struct {
 		Name        string `json:"nombre" binding:"required"`
 		Description string `json:"descripcion"`
 	}
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	if err := context.ShouldBindJSON(&request); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	cat := &domain.Category{Name: req.Name, Description: req.Description, UserID: getUserID(c)}
-	if err := h.svc.Create(c.Request.Context(), cat); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	category := &domain.Category{Name: request.Name, Description: request.Description, UserID: getUserID(context)}
+	if err := handler.service.Create(context.Request.Context(), category); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusCreated, cat)
+	context.JSON(http.StatusCreated, category)
 }
 
-func (h *CategoryHandlers) List(c *gin.Context) {
-	cats, err := h.svc.List(c.Request.Context(), getUserID(c))
+func (handler *CategoryHandlers) List(context *gin.Context) {
+	categories, err := handler.service.List(context.Request.Context(), getUserID(context))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, cats)
+	context.JSON(http.StatusOK, categories)
 }
 
-func (h *CategoryHandlers) Get(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
-	cat, err := h.svc.Get(c.Request.Context(), uint(id), getUserID(c))
+func (handler *CategoryHandlers) Get(context *gin.Context) {
+	categoryID, _ := strconv.Atoi(context.Param("id"))
+	category, err := handler.service.Get(context.Request.Context(), uint(categoryID), getUserID(context))
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		context.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, cat)
+	context.JSON(http.StatusOK, category)
 }
 
-func (h *CategoryHandlers) Update(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
-	var req struct {
+func (handler *CategoryHandlers) Update(context *gin.Context) {
+	categoryID, _ := strconv.Atoi(context.Param("id"))
+	var request struct {
 		Name        string `json:"nombre"`
 		Description string `json:"descripcion"`
 	}
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	if err := context.ShouldBindJSON(&request); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	cat := &domain.Category{ID: uint(id), Name: req.Name, Description: req.Description, UserID: getUserID(c)}
-	if err := h.svc.Update(c.Request.Context(), cat); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	category := &domain.Category{ID: uint(categoryID), Name: request.Name, Description: request.Description, UserID: getUserID(context)}
+	if err := handler.service.Update(context.Request.Context(), category); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, cat)
+	context.JSON(http.StatusOK, category)
 }
 
-func (h *CategoryHandlers) Delete(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
-	if err := h.svc.Delete(c.Request.Context(), uint(id), getUserID(c)); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+func (handler *CategoryHandlers) Delete(context *gin.Context) {
+	categoryID, _ := strconv.Atoi(context.Param("id"))
+	if err := handler.service.Delete(context.Request.Context(), uint(categoryID), getUserID(context)); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.Status(http.StatusNoContent)
+	context.Status(http.StatusNoContent)
 }

@@ -1,7 +1,7 @@
 package application
 
 import (
-	"context"
+	stdcontext "context"
 	"errors"
 	"sync"
 	"time"
@@ -24,7 +24,7 @@ func NewAuthService(repo domain.UserRepository, secret string) *AuthService {
 	return &AuthService{repo: repo, jwtSecret: secret}
 }
 
-func (s *AuthService) Register(ctx context.Context, username, password string, profileImageURL *string) (*domain.User, error) {
+func (service *AuthService) Register(requestContext stdcontext.Context, username, password string, profileImageURL *string) (*domain.User, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, err
@@ -36,14 +36,14 @@ func (s *AuthService) Register(ctx context.Context, username, password string, p
 		ProfileImageURL: profileImageURL,
 		AvatarURL:       avatar,
 	}
-	if err := s.repo.Create(ctx, user); err != nil {
+	if err := service.repo.Create(requestContext, user); err != nil {
 		return nil, err
 	}
 	return user, nil
 }
 
-func (s *AuthService) Login(ctx context.Context, username, password string) (string, error) {
-	user, err := s.repo.GetByUsername(ctx, username)
+func (service *AuthService) Login(requestContext stdcontext.Context, username, password string) (string, error) {
+	user, err := service.repo.GetByUsername(requestContext, username)
 	if err != nil {
 		return "", err
 	}
@@ -54,13 +54,13 @@ func (s *AuthService) Login(ctx context.Context, username, password string) (str
 		"sub": user.ID,
 		"exp": time.Now().Add(24 * time.Hour).Unix(),
 	})
-	return token.SignedString([]byte(s.jwtSecret))
+	return token.SignedString([]byte(service.jwtSecret))
 }
 
-func (s *AuthService) Logout(ctx context.Context, token string) error {
+func (service *AuthService) Logout(requestContext stdcontext.Context, token string) error {
 	if token == "" {
 		return errors.New("empty token")
 	}
-	s.invalidTokens.Store(token, struct{}{})
+	service.invalidTokens.Store(token, struct{}{})
 	return nil
 }

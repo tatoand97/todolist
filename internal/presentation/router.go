@@ -11,16 +11,16 @@ import (
 	"todolist/internal/application"
 )
 
-func NewRouter(r *gin.Engine, auth *application.AuthService, category *application.CategoryService, task *application.TaskService, secret string) {
-	authHandlers := NewAuthHandlers(auth)
-	categoryHandlers := NewCategoryHandlers(category)
-	taskHandlers := NewTaskHandlers(task)
+func NewRouter(router *gin.Engine, authService *application.AuthService, categoryService *application.CategoryService, taskService *application.TaskService, jwtSecret string) {
+	authHandlers := NewAuthHandlers(authService)
+	categoryHandlers := NewCategoryHandlers(categoryService)
+	taskHandlers := NewTaskHandlers(taskService)
 
-	r.POST("/usuarios", authHandlers.Register)
-	r.POST("/usuarios/iniciar-sesion", authHandlers.Login)
+	router.POST("/usuarios", authHandlers.Register)
+	router.POST("/usuarios/iniciar-sesion", authHandlers.Login)
 
-	authGroup := r.Group("/")
-	authGroup.Use(jwtMiddleware(secret))
+	authGroup := router.Group("/")
+	authGroup.Use(jwtMiddleware(jwtSecret))
 	authGroup.POST("/usuarios/cerrar-sesion", authHandlers.Logout)
 
 	authGroup.GET("/categorias", categoryHandlers.List)
@@ -36,29 +36,29 @@ func NewRouter(r *gin.Engine, auth *application.AuthService, category *applicati
 	authGroup.DELETE("/tareas/:id", taskHandlers.Delete)
 }
 
-func jwtMiddleware(secret string) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		header := c.GetHeader("Authorization")
+func jwtMiddleware(jwtSecret string) gin.HandlerFunc {
+	return func(context *gin.Context) {
+		header := context.GetHeader("Authorization")
 		if header == "" || !strings.HasPrefix(header, "Bearer ") {
-			c.AbortWithStatus(http.StatusUnauthorized)
+			context.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}
-		tokenStr := strings.TrimPrefix(header, "Bearer ")
-		token, err := jwt.Parse(tokenStr, func(t *jwt.Token) (interface{}, error) {
-			if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+		tokenString := strings.TrimPrefix(header, "Bearer ")
+		token, err := jwt.Parse(tokenString, func(parsedToken *jwt.Token) (interface{}, error) {
+			if _, ok := parsedToken.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("unexpected signing method")
 			}
-			return []byte(secret), nil
+			return []byte(jwtSecret), nil
 		})
 		if err != nil || !token.Valid {
-			c.AbortWithStatus(http.StatusUnauthorized)
+			context.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}
 		if claims, ok := token.Claims.(jwt.MapClaims); ok {
 			if sub, ok := claims["sub"].(float64); ok {
-				c.Set("userID", uint(sub))
+				context.Set("userID", uint(sub))
 			}
 		}
-		c.Next()
+		context.Next()
 	}
 }

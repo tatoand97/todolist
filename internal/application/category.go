@@ -1,7 +1,7 @@
 package application
 
 import (
-	"context"
+	stdcontext "context"
 
 	"todolist/internal/domain"
 )
@@ -14,22 +14,22 @@ func NewCategoryService(repo domain.CategoryRepository) *CategoryService {
 	return &CategoryService{repo: repo}
 }
 
-func (s *CategoryService) Create(ctx context.Context, c *domain.Category) error {
-	return s.repo.Create(ctx, c)
+func (service *CategoryService) Create(requestContext stdcontext.Context, category *domain.Category) error {
+	return service.repo.Create(requestContext, category)
 }
 
-func (s *CategoryService) Update(ctx context.Context, c *domain.Category) error {
-	return s.repo.Update(ctx, c)
+func (service *CategoryService) Update(requestContext stdcontext.Context, category *domain.Category) error {
+	return service.repo.Update(requestContext, category)
 }
 
-func (s *CategoryService) Delete(ctx context.Context, id uint, userID uint) error {
-	return s.repo.Delete(ctx, id, userID)
+func (service *CategoryService) Delete(requestContext stdcontext.Context, id uint, userID uint) error {
+	return service.repo.Delete(requestContext, id, userID)
 }
 
-func (s *CategoryService) Get(ctx context.Context, id uint, userID uint) (*domain.Category, error) {
-	return s.repo.Get(ctx, id, userID)
+func (service *CategoryService) Get(requestContext stdcontext.Context, id uint, userID uint) (*domain.Category, error) {
+	return service.repo.Get(requestContext, id, userID)
 }
 
-func (s *CategoryService) List(ctx context.Context, userID uint) ([]domain.Category, error) {
-	return s.repo.List(ctx, userID)
+func (service *CategoryService) List(requestContext stdcontext.Context, userID uint) ([]domain.Category, error) {
+	return service.repo.List(requestContext, userID)
 }

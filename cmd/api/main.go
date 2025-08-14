@@ -17,50 +17,50 @@ import (
 )
 
 func main() {
-	dsn := os.Getenv("DATABASE_URL")
-	if dsn == "" {
-		dsn = "postgres://postgres:postgres@localhost:5432/todolist?sslmode=disable"
+	databaseURL := os.Getenv("DATABASE_URL")
+	if databaseURL == "" {
+		databaseURL = "postgres://postgres:postgres@localhost:5432/todolist?sslmode=disable"
 	}
 
-	m, err := migrate.New("file://migrations", dsn)
+	migration, err := migrate.New("file://migrations", databaseURL)
 	if err != nil {
 		log.Fatalf("migrate init failed: %v", err)
 	}
-	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+	if err := migration.Up(); err != nil && err != migrate.ErrNoChange {
 		log.Fatalf("migrate up failed: %v", err)
 	}
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	database, err := gorm.Open(postgres.Open(databaseURL), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("database connection failed: %v", err)
 	}
 
-	jwtSecret := os.Getenv("JWT_SECRET")
-	if jwtSecret == "" {
-		jwtSecret = "secret"
+	jwtSecretKey := os.Getenv("JWT_SECRET")
+	if jwtSecretKey == "" {
+		jwtSecretKey = "secret"
 	}
 
 	// Initialize repositories
-	userRepo := postgres_repo.NewUserRepository(db)
-	categoryRepo := postgres_repo.NewCategoryRepository(db)
-	taskRepo := postgres_repo.NewTaskRepository(db)
+	userRepository := postgres_repo.NewUserRepository(database)
+	categoryRepository := postgres_repo.NewCategoryRepository(database)
+	taskRepository := postgres_repo.NewTaskRepository(database)
 
 	// Initialize services
-	authService := application.NewAuthService(userRepo, jwtSecret)
-	categoryService := application.NewCategoryService(categoryRepo)
-	taskService := application.NewTaskService(taskRepo)
+	authService := application.NewAuthService(userRepository, jwtSecretKey)
+	categoryService := application.NewCategoryService(categoryRepository)
+	taskService := application.NewTaskService(taskRepository)
 
 	// Setup Gin router
-	r := gin.Default()
+	router := gin.Default()
 
-	presentation.NewRouter(r, authService, categoryService, taskService, jwtSecret)
+	presentation.NewRouter(router, authService, categoryService, taskService, jwtSecretKey)
 
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
 
-	if err := r.Run(":" + port); err != nil {
+	if err := router.Run(":" + port); err != nil {
 		log.Fatalf("server failed: %v", err)
 	}
 }
