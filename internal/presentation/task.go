@@ -12,97 +12,97 @@ import (
 )
 
 type TaskHandlers struct {
-	svc *application.TaskService
+	service *application.TaskService
 }
 
-func NewTaskHandlers(svc *application.TaskService) *TaskHandlers {
-	return &TaskHandlers{svc: svc}
+func NewTaskHandlers(service *application.TaskService) *TaskHandlers {
+	return &TaskHandlers{service: service}
 }
 
-func (h *TaskHandlers) Create(c *gin.Context) {
-	var req struct {
+func (handler *TaskHandlers) Create(context *gin.Context) {
+	var request struct {
 		Text       string     `json:"texto" binding:"required"`
 		DueDate    *time.Time `json:"fechaTentativaFin"`
 		CategoryID uint       `json:"idCategoria" binding:"required"`
 	}
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	if err := context.ShouldBindJSON(&request); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	task := &domain.Task{Text: req.Text, DueDate: req.DueDate, CategoryID: req.CategoryID, UserID: getUserID(c)}
-	if err := h.svc.Create(c.Request.Context(), task); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	task := &domain.Task{Text: request.Text, DueDate: request.DueDate, CategoryID: request.CategoryID, UserID: getUserID(context)}
+	if err := handler.service.Create(context.Request.Context(), task); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusCreated, task)
+	context.JSON(http.StatusCreated, task)
 }
 
-func (h *TaskHandlers) List(c *gin.Context) {
+func (handler *TaskHandlers) List(context *gin.Context) {
 	var filter domain.TaskFilter
-	if v := c.Query("categoriaId"); v != "" {
-		if id, err := strconv.Atoi(v); err == nil {
-			uid := uint(id)
-			filter.CategoryID = &uid
+	if categoryIDParam := context.Query("categoriaId"); categoryIDParam != "" {
+		if categoryIDInt, err := strconv.Atoi(categoryIDParam); err == nil {
+			categoryIDUint := uint(categoryIDInt)
+			filter.CategoryID = &categoryIDUint
 		}
 	}
-	if v := c.Query("estado"); v != "" {
-		filter.State = &v
+	if stateParam := context.Query("estado"); stateParam != "" {
+		filter.State = &stateParam
 	}
-	tasks, err := h.svc.List(c.Request.Context(), getUserID(c), filter)
+	tasks, err := handler.service.List(context.Request.Context(), getUserID(context), filter)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, tasks)
+	context.JSON(http.StatusOK, tasks)
 }
 
-func (h *TaskHandlers) Get(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
-	task, err := h.svc.Get(c.Request.Context(), uint(id), getUserID(c))
+func (handler *TaskHandlers) Get(context *gin.Context) {
+	taskID, _ := strconv.Atoi(context.Param("id"))
+	task, err := handler.service.Get(context.Request.Context(), uint(taskID), getUserID(context))
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		context.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, task)
+	context.JSON(http.StatusOK, task)
 }
 
-func (h *TaskHandlers) Update(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
-	var req struct {
+func (handler *TaskHandlers) Update(context *gin.Context) {
+	taskID, _ := strconv.Atoi(context.Param("id"))
+	var request struct {
 		Text       *string    `json:"texto"`
 		DueDate    *time.Time `json:"fechaTentativaFin"`
 		State      *string    `json:"estado"`
 		CategoryID *uint      `json:"idCategoria"`
 	}
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	if err := context.ShouldBindJSON(&request); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	task := &domain.Task{ID: uint(id), UserID: getUserID(c)}
-	if req.Text != nil {
-		task.Text = *req.Text
+	task := &domain.Task{ID: uint(taskID), UserID: getUserID(context)}
+	if request.Text != nil {
+		task.Text = *request.Text
 	}
-	if req.DueDate != nil {
-		task.DueDate = req.DueDate
+	if request.DueDate != nil {
+		task.DueDate = request.DueDate
 	}
-	if req.State != nil {
-		task.State = *req.State
+	if request.State != nil {
+		task.State = *request.State
 	}
-	if req.CategoryID != nil {
-		task.CategoryID = *req.CategoryID
+	if request.CategoryID != nil {
+		task.CategoryID = *request.CategoryID
 	}
-	if err := h.svc.Update(c.Request.Context(), task); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	if err := handler.service.Update(context.Request.Context(), task); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, task)
+	context.JSON(http.StatusOK, task)
 }
 
-func (h *TaskHandlers) Delete(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
-	if err := h.svc.Delete(c.Request.Context(), uint(id), getUserID(c)); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+func (handler *TaskHandlers) Delete(context *gin.Context) {
+	taskID, _ := strconv.Atoi(context.Param("id"))
+	if err := handler.service.Delete(context.Request.Context(), uint(taskID), getUserID(context)); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.Status(http.StatusNoContent)
+	context.Status(http.StatusNoContent)
 }
