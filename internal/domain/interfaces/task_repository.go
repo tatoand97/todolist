@@ -5,7 +5,6 @@ import (
 	"todolist/internal/domain/entities"
 )
 
-// TaskFilter captures optional filters for querying tasks.
 type TaskFilter struct {
 	CategoryID *uint
 	State      *string

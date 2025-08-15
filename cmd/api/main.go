@@ -12,7 +12,7 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
-	postgres_repo "todolist/internal/infrastructure/postgres"
+	postgresrepo "todolist/internal/infrastructure/repository"
 	"todolist/internal/presentation"
 )
 
@@ -22,7 +22,7 @@ func main() {
 		dsn = "postgres://postgres:postgres@localhost:5432/todolist?sslmode=disable"
 	}
 
-	m, err := migrate.New("file://migrations", dsn)
+	m, err := migrate.New("file://internal/infrastructure/migrations", dsn)
 	if err != nil {
 		log.Fatalf("migrate init failed: %v", err)
 	}
@@ -41,9 +41,9 @@ func main() {
 	}
 
 	// Initialize repositories
-	userRepo := postgres_repo.NewUserRepository(db)
-	categoryRepo := postgres_repo.NewCategoryRepository(db)
-	taskRepo := postgres_repo.NewTaskRepository(db)
+	userRepo := postgresrepo.NewUserRepository(db)
+	categoryRepo := postgresrepo.NewCategoryRepository(db)
+	taskRepo := postgresrepo.NewTaskRepository(db)
 
 	// Initialize services
 	authService := useCase.NewAuthService(userRepo, jwtSecret)

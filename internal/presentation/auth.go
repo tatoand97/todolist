@@ -3,17 +3,16 @@ package presentation
 import (
 	"net/http"
 	"strings"
+	"todolist/internal/application/useCase"
 
 	"github.com/gin-gonic/gin"
-
-	"todolist/internal/application"
 )
 
 type AuthHandlers struct {
-	service *application.AuthService
+	service *useCase.AuthService
 }
 
-func NewAuthHandlers(service *application.AuthService) *AuthHandlers {
+func NewAuthHandlers(service *useCase.AuthService) *AuthHandlers {
 	return &AuthHandlers{service: service}
 }
 
