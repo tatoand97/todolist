@@ -4,18 +4,18 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+	"todolist/internal/application/useCase"
+	"todolist/internal/domain/entities"
+	"todolist/internal/domain/interfaces"
 
 	"github.com/gin-gonic/gin"
-
-	"todolist/internal/application"
-	"todolist/internal/domain"
 )
 
 type TaskHandlers struct {
-	svc *application.TaskService
+	svc *useCase.TaskService
 }
 
-func NewTaskHandlers(svc *application.TaskService) *TaskHandlers {
+func NewTaskHandlers(svc *useCase.TaskService) *TaskHandlers {
 	return &TaskHandlers{svc: svc}
 }
 
@@ -29,7 +29,7 @@ func (h *TaskHandlers) Create(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	task := &domain.Task{Text: req.Text, DueDate: req.DueDate, CategoryID: req.CategoryID, UserID: getUserID(c)}
+	task := &entities.Task{Text: req.Text, DueDate: req.DueDate, CategoryID: req.CategoryID, UserID: getUserID(c)}
 	if err := h.svc.Create(c.Request.Context(), task); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -38,7 +38,7 @@ func (h *TaskHandlers) Create(c *gin.Context) {
 }
 
 func (h *TaskHandlers) List(c *gin.Context) {
-	var filter domain.TaskFilter
+	var filter interfaces.TaskFilter
 	if v := c.Query("categoriaId"); v != "" {
 		if id, err := strconv.Atoi(v); err == nil {
 			uid := uint(id)
@@ -48,7 +48,7 @@ func (h *TaskHandlers) List(c *gin.Context) {
 	if v := c.Query("estado"); v != "" {
 		filter.State = &v
 	}
-	tasks, err := h.svc.List(c.Request.Context(), getUserID(c), filter)
+	var tasks, err = h.svc.List(c.Request.Context(), getUserID(c), filter)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -78,7 +78,7 @@ func (h *TaskHandlers) Update(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	task := &domain.Task{ID: uint(id), UserID: getUserID(c)}
+	task := &entities.Task{ID: uint(id), UserID: getUserID(c)}
 	if req.Text != nil {
 		task.Text = *req.Text
 	}

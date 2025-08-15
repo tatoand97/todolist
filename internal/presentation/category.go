@@ -3,18 +3,19 @@ package presentation
 import (
 	"net/http"
 	"strconv"
+	"strings"
+	"todolist/internal/application"
+	"todolist/internal/application/useCase"
+	"todolist/internal/domain/entities"
 
 	"github.com/gin-gonic/gin"
-
-	"todolist/internal/application"
-	"todolist/internal/domain"
 )
 
 type CategoryHandlers struct {
-	svc *application.CategoryService
+	svc *useCase.CategoryService
 }
 
-func NewCategoryHandlers(svc *application.CategoryService) *CategoryHandlers {
+func NewCategoryHandlers(svc *useCase.CategoryService) *CategoryHandlers {
 	return &CategoryHandlers{svc: svc}
 }
 
@@ -27,6 +28,9 @@ func getUserID(c *gin.Context) uint {
 }
 
 func (h *CategoryHandlers) Create(c *gin.Context) {
+	ctx, cancel := application.CtxTO(c.Request.Context())
+	defer cancel()
+
 	var req struct {
 		Name        string `json:"nombre" binding:"required"`
 		Description string `json:"descripcion"`
@@ -35,11 +39,21 @@ func (h *CategoryHandlers) Create(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	cat := &domain.Category{Name: req.Name, Description: req.Description, UserID: getUserID(c)}
-	if err := h.svc.Create(c.Request.Context(), cat); err != nil {
+
+	userID := c.MustGet("userID").(uint)
+
+	cat := &entities.Category{
+		Name:        strings.TrimSpace(req.Name),
+		Description: req.Description,
+		UserID:      userID,
+	}
+
+	if err := h.svc.Create(ctx, cat); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	c.Header("Location", "/categorias/"+strconv.FormatUint(uint64(cat.ID), 10))
 	c.JSON(http.StatusCreated, cat)
 }
 
@@ -72,7 +86,7 @@ func (h *CategoryHandlers) Update(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	cat := &domain.Category{ID: uint(id), Name: req.Name, Description: req.Description, UserID: getUserID(c)}
+	cat := &entities.Category{ID: uint(id), Name: req.Name, Description: req.Description, UserID: getUserID(c)}
 	if err := h.svc.Update(c.Request.Context(), cat); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

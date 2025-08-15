@@ -3,15 +3,16 @@ package presentation
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
+	"time"
+	"todolist/internal/application/useCase"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
-
-	"todolist/internal/application"
 )
 
-func NewRouter(r *gin.Engine, auth *application.AuthService, category *application.CategoryService, task *application.TaskService, secret string) {
+func NewRouter(r *gin.Engine, auth *useCase.AuthService, category *useCase.CategoryService, task *useCase.TaskService, secret string) {
 	authHandlers := NewAuthHandlers(auth)
 	categoryHandlers := NewCategoryHandlers(category)
 	taskHandlers := NewTaskHandlers(task)
@@ -38,27 +39,50 @@ func NewRouter(r *gin.Engine, auth *application.AuthService, category *applicati
 
 func jwtMiddleware(secret string) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		header := c.GetHeader("Authorization")
-		if header == "" || !strings.HasPrefix(header, "Bearer ") {
-			c.AbortWithStatus(http.StatusUnauthorized)
+		auth := c.GetHeader("Authorization")
+		parts := strings.Fields(auth)
+		if len(parts) != 2 || !strings.EqualFold(parts[0], "Bearer") {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "token requerido"})
 			return
 		}
-		tokenStr := strings.TrimPrefix(header, "Bearer ")
-		token, err := jwt.Parse(tokenStr, func(t *jwt.Token) (interface{}, error) {
-			if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, fmt.Errorf("unexpected signing method")
+		tokenStr := parts[1]
+
+		claims := &jwt.RegisteredClaims{}
+		token, err := jwt.ParseWithClaims(tokenStr, claims, func(t *jwt.Token) (interface{}, error) {
+			if t.Method != jwt.SigningMethodHS256 {
+				return nil, fmt.Errorf("algoritmo inválido")
 			}
 			return []byte(secret), nil
 		})
 		if err != nil || !token.Valid {
-			c.AbortWithStatus(http.StatusUnauthorized)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "token inválido"})
 			return
 		}
-		if claims, ok := token.Claims.(jwt.MapClaims); ok {
-			if sub, ok := claims["sub"].(float64); ok {
-				c.Set("userID", uint(sub))
-			}
+
+		now := time.Now()
+		// Verifica expiración
+		if claims.ExpiresAt != nil && now.After(claims.ExpiresAt.Time) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "token expirado"})
+			return
 		}
+		// Verifica not-before
+		if claims.NotBefore != nil && now.Before(claims.NotBefore.Time) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "token aún no válido"})
+			return
+		}
+
+		// Extraer userID desde Subject
+		if claims.Subject == "" {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "sub faltante"})
+			return
+		}
+		uid64, err := strconv.ParseUint(claims.Subject, 10, 64)
+		if err != nil || uid64 == 0 {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "sub inválido"})
+			return
+		}
+		c.Set("userID", uint(uid64))
+
 		c.Next()
 	}
 }

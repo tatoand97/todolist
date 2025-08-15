@@ -22,7 +22,7 @@ tags:
 paths:
   /usuarios:
     post:
-      tags: [Usuarios]
+      tags: [ Usuarios ]
       summary: Registro de usuario
       description: Crea un usuario; si no hay imagen, asigna avatar por defecto.
       requestBody:
@@ -42,9 +42,9 @@ paths:
                   type: string
                   minLength: 6
                 profileImage:
-                    type: string
-                    format: binary
-              required: [username, password]
+                  type: string
+                  format: binary
+              required: [ username, password ]
       responses:
         '201':
           description: Usuario creado
@@ -62,7 +62,7 @@ paths:
                 $ref: '#/components/schemas/Error'
   /usuarios/iniciar-sesion:
     post:
-      tags: [Autenticación]
+      tags: [ Autenticación ]
       summary: Login
       requestBody:
         required: true
@@ -70,7 +70,7 @@ paths:
           application/json:
             schema:
               type: object
-              required: [username, password]
+              required: [ username, password ]
               properties:
                 username: { type: string }
                 password: { type: string }
@@ -89,10 +89,10 @@ paths:
           $ref: '#/components/responses/Unauthorized'
   /usuarios/cerrar-sesion:
     post:
-      tags: [Autenticación]
+      tags: [ Autenticación ]
       summary: Logout
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       responses:
         '204':
           description: Sesión cerrada (token invalidado/rotado)
@@ -101,10 +101,10 @@ paths:
 
   /categorias:
     get:
-      tags: [Categorías]
+      tags: [ Categorías ]
       summary: Listar categorías del usuario
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       responses:
         '200':
           description: OK
@@ -116,17 +116,17 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
     post:
-      tags: [Categorías]
+      tags: [ Categorías ]
       summary: Crear categoría
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [nombre]
+              required: [ nombre ]
               properties:
                 nombre: { type: string, minLength: 1 }
                 descripcion: { type: string }
@@ -143,10 +143,10 @@ paths:
           $ref: '#/components/responses/Unauthorized'
   /categorias/{id}:
     get:
-      tags: [Categorías]
+      tags: [ Categorías ]
       summary: Obtener categoría por id
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/IdPath'
       responses:
@@ -161,10 +161,10 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
     put:
-      tags: [Categorías]
+      tags: [ Categorías ]
       summary: Actualizar categoría
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/IdPath'
       requestBody:
@@ -190,10 +190,10 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
     delete:
-      tags: [Categorías]
+      tags: [ Categorías ]
       summary: Eliminar categoría
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/IdPath'
       responses:
@@ -206,10 +206,10 @@ paths:
 
   /tareas:
     post:
-      tags: [Tareas]
+      tags: [ Tareas ]
       summary: Crear tarea
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       requestBody:
         required: true
         content:
@@ -230,10 +230,10 @@ paths:
 
   /tareas/usuario:
     get:
-      tags: [Tareas]
+      tags: [ Tareas ]
       summary: Listar tareas del usuario (con filtros)
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       parameters:
         - name: categoriaId
           in: query
@@ -274,10 +274,10 @@ paths:
 
   /tareas/{id}:
     get:
-      tags: [Tareas]
+      tags: [ Tareas ]
       summary: Obtener tarea por id (propiedad verificada)
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/IdPath'
       responses:
@@ -292,10 +292,10 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
     put:
-      tags: [Tareas]
+      tags: [ Tareas ]
       summary: Actualizar tarea
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/IdPath'
       requestBody:
@@ -318,10 +318,10 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
     delete:
-      tags: [Tareas]
+      tags: [ Tareas ]
       summary: Eliminar tarea
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/IdPath'
       responses:
@@ -369,7 +369,7 @@ components:
   schemas:
     UsuarioRegistro:
       type: object
-      required: [username, password]
+      required: [ username, password ]
       properties:
         username:
           type: string
@@ -405,7 +405,7 @@ components:
           description: Propietario (servidor lo infiere del token)
     EstadoTarea:
       type: string
-      enum: [Sin Empezar, Empezada, Finalizada]
+      enum: [ Sin Empezar, Empezada, Finalizada ]
     Tarea:
       type: object
       properties:
@@ -424,7 +424,7 @@ components:
         usuarioId: { type: string }
     TareaCrear:
       type: object
-      required: [texto, idCategoria]
+      required: [ texto, idCategoria ]
       properties:
         texto: { type: string, minLength: 1 }
         fechaTentativaFin:
@@ -452,7 +452,7 @@ components:
         message: { type: string }
 
 security:
-  - bearerAuth: []
+  - bearerAuth: [ ]
 
 x-guidelines:
   ownership: "El servidor valida que {usuarioId} del recurso coincide con el sujeto del JWT."

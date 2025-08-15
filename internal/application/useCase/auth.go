@@ -1,36 +1,36 @@
-package application
+package useCase
 
 import (
 	"context"
 	"errors"
 	"sync"
 	"time"
+	"todolist/internal/domain/entities"
+	"todolist/internal/domain/interfaces"
 
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
-
-	"todolist/internal/domain"
 )
 
 const defaultAvatar = "https://example.com/default-avatar.png"
 
 type AuthService struct {
-	repo          domain.UserRepository
+	repo          interfaces.UserRepository
 	jwtSecret     string
 	invalidTokens sync.Map // map[string]struct{}
 }
 
-func NewAuthService(repo domain.UserRepository, secret string) *AuthService {
+func NewAuthService(repo interfaces.UserRepository, secret string) *AuthService {
 	return &AuthService{repo: repo, jwtSecret: secret}
 }
 
-func (s *AuthService) Register(ctx context.Context, username, password string, profileImageURL *string) (*domain.User, error) {
+func (s *AuthService) Register(ctx context.Context, username, password string, profileImageURL *string) (*entities.User, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, err
 	}
 	avatar := defaultAvatar
-	user := &domain.User{
+	user := &entities.User{
 		Username:        username,
 		PasswordHash:    string(hash),
 		ProfileImageURL: profileImageURL,

@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"todolist/internal/application/useCase"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-migrate/migrate/v4"
@@ -11,7 +12,6 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
-	"todolist/internal/application"
 	postgres_repo "todolist/internal/infrastructure/postgres"
 	"todolist/internal/presentation"
 )
@@ -46,9 +46,9 @@ func main() {
 	taskRepo := postgres_repo.NewTaskRepository(db)
 
 	// Initialize services
-	authService := application.NewAuthService(userRepo, jwtSecret)
-	categoryService := application.NewCategoryService(categoryRepo)
-	taskService := application.NewTaskService(taskRepo)
+	authService := useCase.NewAuthService(userRepo, jwtSecret)
+	categoryService := useCase.NewCategoryService(categoryRepo)
+	taskService := useCase.NewTaskService(taskRepo)
 
 	// Setup Gin router
 	r := gin.Default()

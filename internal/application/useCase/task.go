@@ -1,10 +1,10 @@
-package application
+package useCase
 
 import (
 	"context"
 	"errors"
-
-	"todolist/internal/domain"
+	"todolist/internal/domain/entities"
+	"todolist/internal/domain/interfaces"
 )
 
 var allowedStates = map[string]bool{
@@ -14,14 +14,14 @@ var allowedStates = map[string]bool{
 }
 
 type TaskService struct {
-	repo domain.TaskRepository
+	repo interfaces.TaskRepository
 }
 
-func NewTaskService(repo domain.TaskRepository) *TaskService {
+func NewTaskService(repo interfaces.TaskRepository) *TaskService {
 	return &TaskService{repo: repo}
 }
 
-func (s *TaskService) Create(ctx context.Context, t *domain.Task) error {
+func (s *TaskService) Create(ctx context.Context, t *entities.Task) error {
 	if t.State == "" {
 		t.State = "Sin Empezar"
 	} else if !allowedStates[t.State] {
@@ -30,7 +30,7 @@ func (s *TaskService) Create(ctx context.Context, t *domain.Task) error {
 	return s.repo.Create(ctx, t)
 }
 
-func (s *TaskService) Update(ctx context.Context, t *domain.Task) error {
+func (s *TaskService) Update(ctx context.Context, t *entities.Task) error {
 	if t.State != "" && !allowedStates[t.State] {
 		return errors.New("invalid state")
 	}
@@ -41,10 +41,10 @@ func (s *TaskService) Delete(ctx context.Context, id uint, userID uint) error {
 	return s.repo.Delete(ctx, id, userID)
 }
 
-func (s *TaskService) Get(ctx context.Context, id uint, userID uint) (*domain.Task, error) {
+func (s *TaskService) Get(ctx context.Context, id uint, userID uint) (*entities.Task, error) {
 	return s.repo.Get(ctx, id, userID)
 }
 
-func (s *TaskService) List(ctx context.Context, userID uint, f domain.TaskFilter) ([]domain.Task, error) {
+func (s *TaskService) List(ctx context.Context, userID uint, f interfaces.TaskFilter) ([]entities.Task, error) {
 	return s.repo.List(ctx, userID, f)
 }
