@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="RemoteTargetsManager">
+    <targets>
+      <target name="api" type="docker-compose" uuid="715ea9be-ffcb-4b1e-9d9a-339bd2f9cf63">
+        <config>
+          <option name="targetPlatform">
+            <TargetPlatform />
+          </option>
+          <option name="configurationFiles">
+            <list>
+              <option value="C:\Users\ricar\GolandProjects\todolist\docker-compose.yml" />
+            </list>
+          </option>
+          <option name="serviceName" value="api" />
+        </config>
+        <ContributedStateBase type="GoLanguageRuntime">
+          <config>
+            <option name="goPath" value="Compose can now delegate builds to bake for better performance." />
+            <option name="goRoot" value="Compose can now delegate builds to bake for better performance." />
+            <option name="goVersion" value="Compose can now delegate builds to bake for better performance." />
+          </config>
+        </ContributedStateBase>
+      </target>
+    </targets>
+  </component>
+</project>
