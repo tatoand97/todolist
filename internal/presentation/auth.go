@@ -3,17 +3,18 @@ package presentation
 import (
 	"net/http"
 	"strings"
-	"todolist/internal/application/useCase"
 
 	"github.com/gin-gonic/gin"
+
+	"todolist/internal/application"
 )
 
 type AuthHandlers struct {
-	svc *useCase.AuthService
+	service *application.AuthService
 }
 
-func NewAuthHandlers(svc *useCase.AuthService) *AuthHandlers {
-	return &AuthHandlers{svc: svc}
+func NewAuthHandlers(service *application.AuthService) *AuthHandlers {
+	return &AuthHandlers{service: service}
 }
 
 type registerRequest struct {
@@ -22,18 +23,18 @@ type registerRequest struct {
 	ProfileImageURL *string `json:"profileImageUrl"`
 }
 
-func (h *AuthHandlers) Register(c *gin.Context) {
-	var req registerRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+func (handler *AuthHandlers) Register(context *gin.Context) {
+	var request registerRequest
+	if err := context.ShouldBindJSON(&request); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	user, err := h.svc.Register(c.Request.Context(), req.Username, req.Password, req.ProfileImageURL)
+	user, err := handler.service.Register(context.Request.Context(), request.Username, request.Password, request.ProfileImageURL)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusCreated, gin.H{
+	context.JSON(http.StatusCreated, gin.H{
 		"id":              user.ID,
 		"username":        user.Username,
 		"profileImageUrl": user.ProfileImageURL,
@@ -46,35 +47,35 @@ type loginRequest struct {
 	Password string `json:"password" binding:"required"`
 }
 
-func (h *AuthHandlers) Login(c *gin.Context) {
-	var req loginRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+func (handler *AuthHandlers) Login(context *gin.Context) {
+	var request loginRequest
+	if err := context.ShouldBindJSON(&request); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	token, err := h.svc.Login(c.Request.Context(), req.Username, req.Password)
+	token, err := handler.service.Login(context.Request.Context(), request.Username, request.Password)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		context.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"token": token})
+	context.JSON(http.StatusOK, gin.H{"token": token})
 }
 
-func (h *AuthHandlers) Logout(c *gin.Context) {
-	header := c.GetHeader("Authorization")
+func (handler *AuthHandlers) Logout(context *gin.Context) {
+	header := context.GetHeader("Authorization")
 	const prefix = "Bearer "
 	if header == "" || !strings.HasPrefix(header, prefix) {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid authorization header"})
+		context.JSON(http.StatusUnauthorized, gin.H{"error": "invalid authorization header"})
 		return
 	}
 	token := strings.TrimSpace(header[len(prefix):])
 	if token == "" {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
+		context.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
 		return
 	}
-	if err := h.svc.Logout(c.Request.Context(), token); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	if err := handler.service.Logout(context.Request.Context(), token); err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.Status(http.StatusNoContent)
+	context.Status(http.StatusNoContent)
 }
