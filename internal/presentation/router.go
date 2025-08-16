@@ -17,6 +17,10 @@ func NewRouter(router *gin.Engine, authService *useCase.AuthService, categorySer
 	categoryHandlers := NewCategoryHandlers(categoryService)
 	taskHandlers := NewTaskHandlers(taskService)
 
+	router.GET("/health", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"status": "ok"})
+	})
+
 	router.POST("/usuarios", authHandlers.Register)
 	router.POST("/usuarios/iniciar-sesion", authHandlers.Login)
 
