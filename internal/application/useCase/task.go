@@ -21,20 +21,20 @@ func NewTaskService(repo interfaces.TaskRepository) *TaskService {
 	return &TaskService{repo: repo}
 }
 
-func (s *TaskService) Create(ctx context.Context, t *entities.Task) error {
-	if t.State == "" {
-		t.State = "Sin Empezar"
-	} else if !allowedStates[t.State] {
+func (s *TaskService) Create(ctx context.Context, task *entities.Task) error {
+	if task.State == "" {
+		task.State = "Sin Empezar"
+	} else if !allowedStates[task.State] {
 		return errors.New("invalid state")
 	}
-	return s.repo.Create(ctx, t)
+	return s.repo.Create(ctx, task)
 }
 
-func (s *TaskService) Update(ctx context.Context, t *entities.Task) error {
-	if t.State != "" && !allowedStates[t.State] {
+func (s *TaskService) Update(ctx context.Context, task *entities.Task) error {
+	if task.State != "" && !allowedStates[task.State] {
 		return errors.New("invalid state")
 	}
-	return s.repo.Update(ctx, t)
+	return s.repo.Update(ctx, task)
 }
 
 func (s *TaskService) Delete(ctx context.Context, id uint, userID uint) error {
@@ -45,6 +45,6 @@ func (s *TaskService) Get(ctx context.Context, id uint, userID uint) (*entities.
 	return s.repo.Get(ctx, id, userID)
 }
 
-func (s *TaskService) List(ctx context.Context, userID uint, f interfaces.TaskFilter) ([]entities.Task, error) {
-	return s.repo.List(ctx, userID, f)
+func (s *TaskService) List(ctx context.Context, userID uint, filter interfaces.TaskFilter) ([]entities.Task, error) {
+	return s.repo.List(ctx, userID, filter)
 }

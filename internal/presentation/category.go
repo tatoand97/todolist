@@ -12,11 +12,11 @@ import (
 )
 
 type CategoryHandlers struct {
-	svc *useCase.CategoryService
+	categoryService *useCase.CategoryService
 }
 
-func NewCategoryHandlers(svc *useCase.CategoryService) *CategoryHandlers {
-	return &CategoryHandlers{svc: svc}
+func NewCategoryHandlers(categoryService *useCase.CategoryService) *CategoryHandlers {
+	return &CategoryHandlers{categoryService: categoryService}
 }
 
 func getUserID(c *gin.Context) uint {
@@ -42,42 +42,42 @@ func (h *CategoryHandlers) Create(c *gin.Context) {
 
 	userID := c.MustGet("userID").(uint)
 
-	cat := &entities.Category{
+	category := &entities.Category{
 		Name:        strings.TrimSpace(req.Name),
 		Description: req.Description,
 		UserID:      userID,
 	}
 
-	if err := h.svc.Create(ctx, cat); err != nil {
+	if err := h.categoryService.Create(ctx, category); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.Header("Location", "/categorias/"+strconv.FormatUint(uint64(cat.ID), 10))
-	c.JSON(http.StatusCreated, cat)
+	c.Header("Location", "/categorias/"+strconv.FormatUint(uint64(category.ID), 10))
+	c.JSON(http.StatusCreated, category)
 }
 
 func (h *CategoryHandlers) List(c *gin.Context) {
-	cats, err := h.svc.List(c.Request.Context(), getUserID(c))
+	categories, err := h.categoryService.List(c.Request.Context(), getUserID(c))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, cats)
+	c.JSON(http.StatusOK, categories)
 }
 
 func (h *CategoryHandlers) Get(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
-	cat, err := h.svc.Get(c.Request.Context(), uint(id), getUserID(c))
+	categoryID, _ := strconv.Atoi(c.Param("id"))
+	category, err := h.categoryService.Get(c.Request.Context(), uint(categoryID), getUserID(c))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, cat)
+	c.JSON(http.StatusOK, category)
 }
 
 func (h *CategoryHandlers) Update(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
+	categoryID, _ := strconv.Atoi(c.Param("id"))
 	var req struct {
 		Name        string `json:"nombre"`
 		Description string `json:"descripcion"`
@@ -86,17 +86,17 @@ func (h *CategoryHandlers) Update(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	cat := &entities.Category{ID: uint(id), Name: req.Name, Description: req.Description, UserID: getUserID(c)}
-	if err := h.svc.Update(c.Request.Context(), cat); err != nil {
+	category := &entities.Category{ID: uint(categoryID), Name: req.Name, Description: req.Description, UserID: getUserID(c)}
+	if err := h.categoryService.Update(c.Request.Context(), category); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, cat)
+	c.JSON(http.StatusOK, category)
 }
 
 func (h *CategoryHandlers) Delete(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
-	if err := h.svc.Delete(c.Request.Context(), uint(id), getUserID(c)); err != nil {
+	categoryID, _ := strconv.Atoi(c.Param("id"))
+	if err := h.categoryService.Delete(c.Request.Context(), uint(categoryID), getUserID(c)); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}

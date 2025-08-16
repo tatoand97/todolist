@@ -15,19 +15,19 @@ func NewCategoryService(repo interfaces.CategoryRepository) *CategoryService {
 	return &CategoryService{repo: repo}
 }
 
-func (s *CategoryService) Create(ctx context.Context, c *entities.Category) error {
-	if err := validations.ValidateNewCategory(c); err != nil {
+func (s *CategoryService) Create(ctx context.Context, category *entities.Category) error {
+	if err := validations.ValidateNewCategory(category); err != nil {
 		return err
 	}
 
-	return s.repo.Create(ctx, c)
+	return s.repo.Create(ctx, category)
 }
 
-func (s *CategoryService) Update(ctx context.Context, c *entities.Category) error {
-	if err := validations.ValidateUpdate(c); err != nil {
+func (s *CategoryService) Update(ctx context.Context, category *entities.Category) error {
+	if err := validations.ValidateUpdate(category); err != nil {
 		return err
 	}
-	return s.repo.Update(ctx, c)
+	return s.repo.Update(ctx, category)
 }
 
 func (s *CategoryService) Delete(ctx context.Context, id uint, userID uint) error {

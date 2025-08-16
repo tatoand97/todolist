@@ -21,9 +21,9 @@ func (r *userRepository) Create(ctx context.Context, user *entities.User) error 
 }
 
 func (r *userRepository) GetByUsername(ctx context.Context, username string) (*entities.User, error) {
-	var u entities.User
-	if err := r.db.WithContext(ctx).Where("username = ?", username).First(&u).Error; err != nil {
+	var user entities.User
+	if err := r.db.WithContext(ctx).Where("username = ?", username).First(&user).Error; err != nil {
 		return nil, err
 	}
-	return &u, nil
+	return &user, nil
 }
