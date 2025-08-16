@@ -3,6 +3,7 @@ package useCase
 import (
 	"context"
 	"errors"
+	"strconv"
 	"sync"
 	"time"
 	"todolist/internal/domain/entities"
@@ -47,13 +48,20 @@ func (s *AuthService) Login(ctx context.Context, username, password string) (str
 	if err != nil {
 		return "", err
 	}
+
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password)); err != nil {
 		return "", errors.New("invalid credentials")
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": user.ID,
-		"exp": time.Now().Add(24 * time.Hour).Unix(),
-	})
+
+	now := time.Now()
+	claims := jwt.RegisteredClaims{
+		Subject:   strconv.FormatUint(uint64(user.ID), 10),
+		ExpiresAt: jwt.NewNumericDate(now.Add(24 * time.Hour)),
+		IssuedAt:  jwt.NewNumericDate(now),
+		NotBefore: jwt.NewNumericDate(now),
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(s.jwtSecret))
 }
 
