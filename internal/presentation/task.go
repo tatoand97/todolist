@@ -12,11 +12,11 @@ import (
 )
 
 type TaskHandlers struct {
-	svc *useCase.TaskService
+	taskService *useCase.TaskService
 }
 
-func NewTaskHandlers(svc *useCase.TaskService) *TaskHandlers {
-	return &TaskHandlers{svc: svc}
+func NewTaskHandlers(taskService *useCase.TaskService) *TaskHandlers {
+	return &TaskHandlers{taskService: taskService}
 }
 
 func (h *TaskHandlers) Create(c *gin.Context) {
@@ -30,7 +30,7 @@ func (h *TaskHandlers) Create(c *gin.Context) {
 		return
 	}
 	task := &entities.Task{Text: req.Text, DueDate: req.DueDate, CategoryID: req.CategoryID, UserID: getUserID(c)}
-	if err := h.svc.Create(c.Request.Context(), task); err != nil {
+	if err := h.taskService.Create(c.Request.Context(), task); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -39,26 +39,26 @@ func (h *TaskHandlers) Create(c *gin.Context) {
 
 func (h *TaskHandlers) List(c *gin.Context) {
 	var filter interfaces.TaskFilter
-	if v := c.Query("categoriaId"); v != "" {
-		if id, err := strconv.Atoi(v); err == nil {
-			uid := uint(id)
-			filter.CategoryID = &uid
+	if categoryIDParam := c.Query("categoriaId"); categoryIDParam != "" {
+		if categoryID, err := strconv.Atoi(categoryIDParam); err == nil {
+			categoryIDUint := uint(categoryID)
+			filter.CategoryID = &categoryIDUint
 		}
 	}
-	if v := c.Query("estado"); v != "" {
-		filter.State = &v
+	if stateParam := c.Query("estado"); stateParam != "" {
+		filter.State = &stateParam
 	}
-	var tasks, err = h.svc.List(c.Request.Context(), getUserID(c), filter)
+	var taskList, err = h.taskService.List(c.Request.Context(), getUserID(c), filter)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, tasks)
+	c.JSON(http.StatusOK, taskList)
 }
 
 func (h *TaskHandlers) Get(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
-	task, err := h.svc.Get(c.Request.Context(), uint(id), getUserID(c))
+	taskID, _ := strconv.Atoi(c.Param("id"))
+	task, err := h.taskService.Get(c.Request.Context(), uint(taskID), getUserID(c))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
@@ -67,7 +67,7 @@ func (h *TaskHandlers) Get(c *gin.Context) {
 }
 
 func (h *TaskHandlers) Update(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
+	taskID, _ := strconv.Atoi(c.Param("id"))
 	var req struct {
 		Text       *string    `json:"texto"`
 		DueDate    *time.Time `json:"fechaTentativaFin"`
@@ -78,7 +78,7 @@ func (h *TaskHandlers) Update(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	task := &entities.Task{ID: uint(id), UserID: getUserID(c)}
+	task := &entities.Task{ID: uint(taskID), UserID: getUserID(c)}
 	if req.Text != nil {
 		task.Text = *req.Text
 	}
@@ -91,7 +91,7 @@ func (h *TaskHandlers) Update(c *gin.Context) {
 	if req.CategoryID != nil {
 		task.CategoryID = *req.CategoryID
 	}
-	if err := h.svc.Update(c.Request.Context(), task); err != nil {
+	if err := h.taskService.Update(c.Request.Context(), task); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -99,8 +99,8 @@ func (h *TaskHandlers) Update(c *gin.Context) {
 }
 
 func (h *TaskHandlers) Delete(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
-	if err := h.svc.Delete(c.Request.Context(), uint(id), getUserID(c)); err != nil {
+	taskID, _ := strconv.Atoi(c.Param("id"))
+	if err := h.taskService.Delete(c.Request.Context(), uint(taskID), getUserID(c)); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}

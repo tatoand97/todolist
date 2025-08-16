@@ -12,15 +12,15 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func NewRouter(r *gin.Engine, auth *useCase.AuthService, category *useCase.CategoryService, task *useCase.TaskService, secret string) {
-	authHandlers := NewAuthHandlers(auth)
-	categoryHandlers := NewCategoryHandlers(category)
-	taskHandlers := NewTaskHandlers(task)
+func NewRouter(router *gin.Engine, authService *useCase.AuthService, categoryService *useCase.CategoryService, taskService *useCase.TaskService, secret string) {
+	authHandlers := NewAuthHandlers(authService)
+	categoryHandlers := NewCategoryHandlers(categoryService)
+	taskHandlers := NewTaskHandlers(taskService)
 
-	r.POST("/usuarios", authHandlers.Register)
-	r.POST("/usuarios/iniciar-sesion", authHandlers.Login)
+	router.POST("/usuarios", authHandlers.Register)
+	router.POST("/usuarios/iniciar-sesion", authHandlers.Login)
 
-	authGroup := r.Group("/")
+	authGroup := router.Group("/")
 	authGroup.Use(jwtMiddleware(secret))
 	authGroup.POST("/usuarios/cerrar-sesion", authHandlers.Logout)
 
