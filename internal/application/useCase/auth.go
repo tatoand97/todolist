@@ -30,7 +30,9 @@ func (s *AuthService) Register(ctx context.Context, username, password string, p
 	if err != nil {
 		return nil, err
 	}
-	avatar := defaultAvatar
+	if profileImageURL == nil {
+		profileImageURL = &defaultAvatar
+	}
 	user := &entities.User{
 		Username:        username,
 		PasswordHash:    string(hash),
