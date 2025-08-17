@@ -99,7 +99,7 @@ func (h *TaskHandlers) Update(c *gin.Context) {
 		Text       *string    `json:"texto"`
 		DueDate    *time.Time `json:"fechaTentativaFin"`
 		State      *string    `json:"estado"`
-		CategoryID *uint      `json:"idCategoria"`
+		CategoryID *uint      `json:"idCategoria,string"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
