@@ -226,8 +226,8 @@ todolist/
 - `POST /usuarios/cerrar-sesion` - Logout
 
 #### Categorías
-- `GET /categorias` - Listar categorías del usuario
-- `POST /categorias` - Crear categoría
+- `GET /categorias` - Listar todas las categorías
+- `POST /categorias` - Crear categoría global
 - `GET /categorias/:id` - Obtener categoría
 - `PUT /categorias/:id` - Actualizar categoría
 - `DELETE /categorias/:id` - Eliminar categoría
@@ -243,7 +243,7 @@ todolist/
 
 ```sql
 users (id, username, password_hash, profile_image_url, avatar_url)
-categories (id, name, description, user_id)
+categories (id, name, description)
 tasks (id, text, created_at, due_date, state, category_id, user_id)
 ```
 
@@ -263,7 +263,6 @@ erDiagram
         int id PK
         varchar name
         text description
-        int user_id FK
     }
     
     TASKS {
@@ -276,7 +275,6 @@ erDiagram
         int user_id FK
     }
     
-    USERS ||--o{ CATEGORIES : "owns"
     USERS ||--o{ TASKS : "creates"
     CATEGORIES ||--o{ TASKS : "contains"
 ```

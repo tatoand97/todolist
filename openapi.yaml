@@ -3,8 +3,8 @@ info:
   title: API de Tareas y Categorías (Go)
   version: "1.0.0"
   description: |
-    Backend en Go. Endpoints protegidos por JWT (bearerAuth). 
-    Las tareas y categorías son del usuario autenticado. 
+    Backend en Go. Endpoints protegidos por JWT (bearerAuth).
+    Las tareas son del usuario autenticado y las categorías son globales.
     Si el usuario no carga imagen de perfil al registrarse, se asigna avatar por defecto (lógica de servidor).
 
 servers:
@@ -102,7 +102,7 @@ paths:
   /categorias:
     get:
       tags: [ Categorías ]
-      summary: Listar categorías del usuario
+      summary: Listar todas las categorías globales
       security:
         - bearerAuth: [ ]
       responses:
@@ -117,7 +117,7 @@ paths:
           $ref: '#/components/responses/Unauthorized'
     post:
       tags: [ Categorías ]
-      summary: Crear categoría
+      summary: Crear categoría global
       security:
         - bearerAuth: [ ]
       requestBody:
@@ -144,7 +144,7 @@ paths:
   /categorias/{id}:
     get:
       tags: [ Categorías ]
-      summary: Obtener categoría por id
+      summary: Obtener categoría global por id
       security:
         - bearerAuth: [ ]
       parameters:
@@ -162,7 +162,7 @@ paths:
           $ref: '#/components/responses/NotFound'
     put:
       tags: [ Categorías ]
-      summary: Actualizar categoría
+      summary: Actualizar categoría global
       security:
         - bearerAuth: [ ]
       parameters:
@@ -191,7 +191,7 @@ paths:
           $ref: '#/components/responses/NotFound'
     delete:
       tags: [ Categorías ]
-      summary: Eliminar categoría
+      summary: Eliminar categoría global
       security:
         - bearerAuth: [ ]
       parameters:

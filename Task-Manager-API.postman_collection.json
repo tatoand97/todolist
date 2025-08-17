@@ -105,7 +105,7 @@
 			"name": "Categories",
 			"item": [
 				{
-					"name": "Create Category",
+                                "name": "Create Global Category",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -135,7 +135,7 @@
 					"response": []
 				},
 				{
-					"name": "List Categories",
+                                "name": "List Global Categories",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -157,7 +157,7 @@
 					"response": []
 				},
 				{
-					"name": "Get Category by ID",
+                                "name": "Get Global Category by ID",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -180,7 +180,7 @@
 					"response": []
 				},
 				{
-					"name": "Update Category",
+                                "name": "Update Global Category",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -211,7 +211,7 @@
 					"response": []
 				},
 				{
-					"name": "Delete Category",
+                                "name": "Delete Global Category",
 					"request": {
 						"method": "DELETE",
 						"header": [
