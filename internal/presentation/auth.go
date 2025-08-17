@@ -1,6 +1,7 @@
 package presentation
 
 import (
+	"io"
 	"net/http"
 	"strings"
 	"todolist/internal/application/useCase"
@@ -17,18 +18,34 @@ func NewAuthHandlers(service *useCase.AuthService) *AuthHandlers {
 }
 
 type registerRequest struct {
-	Username        string  `json:"username" binding:"required"`
-	Password        string  `json:"password" binding:"required"`
-	ProfileImageURL *string `json:"profileImageUrl"`
+	Username string `json:"username" form:"username" binding:"required"`
+	Password string `json:"password" form:"password" binding:"required"`
 }
 
 func (handler *AuthHandlers) Register(context *gin.Context) {
 	var request registerRequest
-	if err := context.ShouldBindJSON(&request); err != nil {
+	if err := context.ShouldBind(&request); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	user, err := handler.service.Register(context.Request.Context(), request.Username, request.Password, request.ProfileImageURL)
+
+	var imageData []byte
+	file, err := context.FormFile("profileImage")
+	if err == nil {
+		f, err := file.Open()
+		if err != nil {
+			context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		defer f.Close()
+		imageData, err = io.ReadAll(f)
+		if err != nil {
+			context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+	}
+
+	user, err := handler.service.Register(context.Request.Context(), request.Username, request.Password, imageData)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

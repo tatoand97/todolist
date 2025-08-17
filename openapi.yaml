@@ -378,10 +378,6 @@ components:
         password:
           type: string
           minLength: 6
-        profileImageUrl:
-          type: string
-          format: uri
-          description: Alternativa a subir archivo
     UsuarioPublico:
       type: object
       properties:
