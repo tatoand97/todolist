@@ -1,7 +1,7 @@
 package entities
 
 type Category struct {
-	ID          uint   `gorm:"primaryKey"`
-	Name        string `gorm:"not null"`
-	Description string
+	ID          uint   `gorm:"primaryKey" json:"id"`
+	Name        string `gorm:"not null" json:"nombre"`
+	Description string `json:"descripcion"`
 }
