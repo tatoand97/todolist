@@ -36,7 +36,7 @@ func (r *taskRepository) Get(ctx context.Context, id uint, userID uint) (*entiti
 	return &task, nil
 }
 
-func (r *taskRepository) List(ctx context.Context, userID uint, filter interfaces.TaskFilter) ([]entities.Task, error) {
+func (r *taskRepository) List(ctx context.Context, userID uint, filter interfaces.TaskFilter) ([]entities.Task, int64, error) {
 	var tasks []entities.Task
 	query := r.db.WithContext(ctx).Where("user_id = ?", userID)
 	if filter.CategoryID != nil {
@@ -45,8 +45,22 @@ func (r *taskRepository) List(ctx context.Context, userID uint, filter interface
 	if filter.State != nil {
 		query = query.Where("state = ?", *filter.State)
 	}
-	if err := query.Find(&tasks).Error; err != nil {
-		return nil, err
+
+	var total int64
+	if err := query.Model(&entities.Task{}).Count(&total).Error; err != nil {
+		return nil, 0, err
 	}
-	return tasks, nil
+
+	if filter.PageSize > 0 {
+		query = query.Limit(filter.PageSize)
+	}
+	if filter.Page > 0 && filter.PageSize > 0 {
+		offset := (filter.Page - 1) * filter.PageSize
+		query = query.Offset(offset)
+	}
+
+	if err := query.Find(&tasks).Error; err != nil {
+		return nil, 0, err
+	}
+	return tasks, total, nil
 }

@@ -268,29 +268,39 @@
 					},
 					"response": []
 				},
-				{
-					"name": "List User Tasks",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{jwt_token}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/tareas/usuario",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"tareas",
-								"usuario"
-							]
-						}
-					},
-					"response": []
-				},
+                                {
+                                        "name": "List User Tasks",
+                                        "request": {
+                                                "method": "GET",
+                                                "header": [
+                                                        {
+                                                                "key": "Authorization",
+                                                                "value": "Bearer {{jwt_token}}"
+                                                        }
+                                                ],
+                                                "url": {
+                                                        "raw": "{{base_url}}/tareas/usuario?page=1&pageSize=20",
+                                                        "host": [
+                                                                "{{base_url}}"
+                                                        ],
+                                                        "path": [
+                                                                "tareas",
+                                                                "usuario"
+                                                        ],
+                                                        "query": [
+                                                                {
+                                                                        "key": "page",
+                                                                        "value": "1"
+                                                                },
+                                                                {
+                                                                        "key": "pageSize",
+                                                                        "value": "20"
+                                                                }
+                                                        ]
+                                                }
+                                        },
+                                        "response": []
+                                },
 				{
 					"name": "List User Tasks with Filters",
 					"request": {
