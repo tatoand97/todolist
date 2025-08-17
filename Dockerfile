@@ -11,5 +11,6 @@ FROM alpine:3.19
 WORKDIR /app
 COPY --from=build /src/todolist ./todolist
 COPY internal/infrastructure/migrations internal/infrastructure/migrations
+COPY static static
 EXPOSE 8080
 CMD ["./todolist"]

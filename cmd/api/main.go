@@ -53,6 +53,8 @@ func main() {
 	// Setup Gin router
 	r := gin.Default()
 
+	r.Static("/static", "./static")
+
 	presentation.NewRouter(r, authService, categoryService, taskService, jwtSecret)
 
 	port := os.Getenv("PORT")
