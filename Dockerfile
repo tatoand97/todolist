@@ -10,6 +10,6 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o todolist ./cmd/api
 FROM alpine:3.19
 WORKDIR /app
 COPY --from=build /src/todolist ./todolist
-COPY internal/infrastructure/migrations ./migrations
+COPY internal/infrastructure/migrations internal/infrastructure/migrations
 EXPOSE 8080
 CMD ["./todolist"]
