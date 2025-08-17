@@ -5,5 +5,4 @@ type User struct {
 	Username        string `gorm:"uniqueIndex;not null"`
 	PasswordHash    string `gorm:"not null"`
 	ProfileImageURL *string
-	AvatarURL       string `gorm:"not null"`
 }

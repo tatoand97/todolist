@@ -35,7 +35,6 @@ func (s *AuthService) Register(ctx context.Context, username, password string, p
 		Username:        username,
 		PasswordHash:    string(hash),
 		ProfileImageURL: profileImageURL,
-		AvatarURL:       avatar,
 	}
 	if err := s.repo.Create(ctx, user); err != nil {
 		return nil, err

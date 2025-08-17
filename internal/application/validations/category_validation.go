@@ -12,9 +12,6 @@ func ValidateNewCategory(c *entities.Category) error {
 		return domain.ErrInvalid
 	}
 	sanitizeCategory(c)
-	if c.UserID == 0 {
-		return errors.Join(domain.ErrInvalid, errors.New("userID requerido"))
-	}
 	if c.Name == "" {
 		return errors.Join(domain.ErrInvalid, errors.New("name requerido"))
 	}

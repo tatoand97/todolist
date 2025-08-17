@@ -35,17 +35,15 @@ func (h *CategoryHandlers) Create(c *gin.Context) {
 		Name        string `json:"nombre" binding:"required"`
 		Description string `json:"descripcion"`
 	}
+	
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	userID := c.MustGet("userID").(uint)
-
 	category := &entities.Category{
 		Name:        strings.TrimSpace(req.Name),
 		Description: req.Description,
-		UserID:      userID,
 	}
 
 	if err := h.categoryService.Create(ctx, category); err != nil {

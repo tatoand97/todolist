@@ -4,7 +4,6 @@ CREATE TABLE users
     username          TEXT NOT NULL UNIQUE,
     password_hash     TEXT NOT NULL,
     profile_image_url TEXT,
-    avatar_url        TEXT NOT NULL
 );
 
 CREATE TABLE categories
@@ -12,7 +11,6 @@ CREATE TABLE categories
     id          SERIAL PRIMARY KEY,
     name        TEXT    NOT NULL,
     description TEXT,
-    user_id     INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE
 );
 
 CREATE TABLE tasks

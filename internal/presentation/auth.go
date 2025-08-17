@@ -37,7 +37,6 @@ func (handler *AuthHandlers) Register(context *gin.Context) {
 		"id":              user.ID,
 		"username":        user.Username,
 		"profileImageUrl": user.ProfileImageURL,
-		"avatarUrl":       user.AvatarURL,
 	})
 }
 

@@ -390,19 +390,12 @@ components:
         profileImageUrl:
           type: string
           format: uri
-        avatarUrl:
-          type: string
-          format: uri
-          description: Asignado por defecto si no hay imagen de perfil
     Categoria:
       type: object
       properties:
         id: { type: string }
         nombre: { type: string }
         descripcion: { type: string }
-        usuarioId:
-          type: string
-          description: Propietario (servidor lo infiere del token)
     EstadoTarea:
       type: string
       enum: [ Sin Empezar, Empezada, Finalizada ]
