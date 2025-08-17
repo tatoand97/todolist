@@ -19,7 +19,6 @@ func NewTaskHandlers(taskService *useCase.TaskService) *TaskHandlers {
 	return &TaskHandlers{taskService: taskService}
 }
 
-
 func getUserID(c *gin.Context) uint {
 	v, _ := c.Get("userID")
 	if id, ok := v.(uint); ok {
@@ -57,12 +56,31 @@ func (h *TaskHandlers) List(c *gin.Context) {
 	if stateParam := c.Query("estado"); stateParam != "" {
 		filter.State = &stateParam
 	}
-	var taskList, err = h.taskService.List(c.Request.Context(), getUserID(c), filter)
+	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
+	if err != nil || page < 1 {
+		page = 1
+	}
+	pageSize, err := strconv.Atoi(c.DefaultQuery("pageSize", "20"))
+	if err != nil || pageSize < 1 {
+		pageSize = 20
+	}
+	if pageSize > 200 {
+		pageSize = 200
+	}
+	filter.Page = page
+	filter.PageSize = pageSize
+
+	items, total, err := h.taskService.List(c.Request.Context(), getUserID(c), filter)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, taskList)
+	c.JSON(http.StatusOK, gin.H{
+		"items":    items,
+		"page":     page,
+		"pageSize": pageSize,
+		"total":    total,
+	})
 }
 
 func (h *TaskHandlers) Get(c *gin.Context) {

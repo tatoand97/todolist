@@ -45,6 +45,6 @@ func (s *TaskService) Get(ctx context.Context, id uint, userID uint) (*entities.
 	return s.repo.Get(ctx, id, userID)
 }
 
-func (s *TaskService) List(ctx context.Context, userID uint, filter interfaces.TaskFilter) ([]entities.Task, error) {
+func (s *TaskService) List(ctx context.Context, userID uint, filter interfaces.TaskFilter) ([]entities.Task, int64, error) {
 	return s.repo.List(ctx, userID, filter)
 }
