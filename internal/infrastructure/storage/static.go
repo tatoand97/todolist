@@ -2,8 +2,10 @@ package storage
 
 import (
 	"context"
+	"errors"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"todolist/internal/domain/interfaces"
 )
@@ -19,6 +21,18 @@ func NewStaticFileWriter(basePath string) interfaces.FileWriter {
 }
 
 func (w *staticFileWriter) Write(ctx context.Context, name string, data []byte) error {
-	path := filepath.Join(w.basePath, name)
+	// sanitize name and prevent path traversal
+	safeName := filepath.Clean(name)
+	if filepath.IsAbs(safeName) || strings.HasPrefix(safeName, "..") {
+		return errors.New("invalid filename")
+	}
+
+	path := filepath.Join(w.basePath, safeName)
+
+	// ensure directory exists
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		return err
+	}
+
 	return os.WriteFile(path, data, 0644)
 }
