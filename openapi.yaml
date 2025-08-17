@@ -18,8 +18,25 @@ tags:
   - name: Usuarios
   - name: Categorías
   - name: Tareas
+  - name: Sistema
 
 paths:
+  /health:
+    get:
+      tags: [ Sistema ]
+      summary: Chequeo de salud
+      description: Verifica que el servicio está operativo.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
   /usuarios:
     post:
       tags: [ Usuarios ]
