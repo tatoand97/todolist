@@ -134,28 +134,60 @@
 					},
 					"response": []
 				},
-				{
+                                {
                                 "name": "List Global Categories",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{jwt_token}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/categorias",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"categorias"
-							]
-						}
-					},
-					"response": []
-				},
+                                        "request": {
+                                                "method": "GET",
+                                                "header": [
+                                                        {
+                                                                "key": "Authorization",
+                                                                "value": "Bearer {{jwt_token}}"
+                                                        }
+                                                ],
+                                                "url": {
+                                                        "raw": "{{base_url}}/categorias",
+                                                        "host": [
+                                                                "{{base_url}}"
+                                                        ],
+                                                        "path": [
+                                                                "categorias"
+                                                        ]
+                                                }
+                                        },
+                                        "response": [
+                                                {
+                                                        "name": "Internal Server Error",
+                                                        "originalRequest": {
+                                                                "method": "GET",
+                                                                "header": [
+                                                                        {
+                                                                                "key": "Authorization",
+                                                                                "value": "Bearer {{jwt_token}}"
+                                                                        }
+                                                                ],
+                                                                "url": {
+                                                                        "raw": "{{base_url}}/categorias",
+                                                                        "host": [
+                                                                                "{{base_url}}"
+                                                                        ],
+                                                                        "path": [
+                                                                                "categorias"
+                                                                        ]
+                                                                }
+                                                        },
+                                                        "status": "Internal Server Error",
+                                                        "code": 500,
+                                                        "_postman_previewlanguage": "json",
+                                                        "header": [
+                                                                {
+                                                                        "key": "Content-Type",
+                                                                        "value": "application/json"
+                                                                }
+                                                        ],
+                                                        "body": "{\n  \"code\": \"internal_error\",\n  \"message\": \"Error interno\"\n}"
+                                                }
+                                        ]
+                                },
 				{
                                 "name": "Get Global Category by ID",
 					"request": {
@@ -299,49 +331,143 @@
                                                         ]
                                                 }
                                         },
-                                        "response": []
+                                        "response": [
+                                                {
+                                                        "name": "Internal Server Error",
+                                                        "originalRequest": {
+                                                                "method": "GET",
+                                                                "header": [
+                                                                        {
+                                                                                "key": "Authorization",
+                                                                                "value": "Bearer {{jwt_token}}"
+                                                                        }
+                                                                ],
+                                                                "url": {
+                                                                        "raw": "{{base_url}}/tareas/usuario?page=1&pageSize=20",
+                                                                        "host": [
+                                                                                "{{base_url}}"
+                                                                        ],
+                                                                        "path": [
+                                                                                "tareas",
+                                                                                "usuario"
+                                                                        ],
+                                                                        "query": [
+                                                                                {
+                                                                                        "key": "page",
+                                                                                        "value": "1"
+                                                                                },
+                                                                                {
+                                                                                        "key": "pageSize",
+                                                                                        "value": "20"
+                                                                                }
+                                                                        ]
+                                                                }
+                                                        },
+                                                        "status": "Internal Server Error",
+                                                        "code": 500,
+                                                        "_postman_previewlanguage": "json",
+                                                        "header": [
+                                                                {
+                                                                        "key": "Content-Type",
+                                                                        "value": "application/json"
+                                                                }
+                                                        ],
+                                                        "body": "{\n  \"code\": \"internal_error\",\n  \"message\": \"Error interno\"\n}"
+                                                }
+                                        ]
                                 },
-				{
-					"name": "List User Tasks with Filters",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{jwt_token}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/tareas/usuario?categoriaId={{category_id}}&estado=Sin Empezar&page=1&pageSize=10",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"tareas",
-								"usuario"
-							],
-							"query": [
-								{
-									"key": "categoriaId",
-									"value": "{{category_id}}"
-								},
-								{
-									"key": "estado",
-									"value": "Sin Empezar"
-								},
-								{
-									"key": "page",
-									"value": "1"
-								},
-								{
-									"key": "pageSize",
-									"value": "10"
-								}
-							]
-						}
-					},
-					"response": []
-				},
+                                {
+                                        "name": "List User Tasks with Filters",
+                                        "request": {
+                                                "method": "GET",
+                                                "header": [
+                                                        {
+                                                                "key": "Authorization",
+                                                                "value": "Bearer {{jwt_token}}"
+                                                        }
+                                                ],
+                                                "url": {
+                                                        "raw": "{{base_url}}/tareas/usuario?categoriaId={{category_id}}&estado=Sin Empezar&page=1&pageSize=10",
+                                                        "host": [
+                                                                "{{base_url}}"
+                                                        ],
+                                                        "path": [
+                                                                "tareas",
+                                                                "usuario"
+                                                        ],
+                                                        "query": [
+                                                                {
+                                                                        "key": "categoriaId",
+                                                                        "value": "{{category_id}}"
+                                                                },
+                                                                {
+                                                                        "key": "estado",
+                                                                        "value": "Sin Empezar"
+                                                                },
+                                                                {
+                                                                        "key": "page",
+                                                                        "value": "1"
+                                                                },
+                                                                {
+                                                                        "key": "pageSize",
+                                                                        "value": "10"
+                                                                }
+                                                        ]
+                                                }
+                                        },
+                                        "response": [
+                                                {
+                                                        "name": "Internal Server Error",
+                                                        "originalRequest": {
+                                                                "method": "GET",
+                                                                "header": [
+                                                                        {
+                                                                                "key": "Authorization",
+                                                                                "value": "Bearer {{jwt_token}}"
+                                                                        }
+                                                                ],
+                                                                "url": {
+                                                                        "raw": "{{base_url}}/tareas/usuario?categoriaId={{category_id}}&estado=Sin Empezar&page=1&pageSize=10",
+                                                                        "host": [
+                                                                                "{{base_url}}"
+                                                                        ],
+                                                                        "path": [
+                                                                                "tareas",
+                                                                                "usuario"
+                                                                        ],
+                                                                        "query": [
+                                                                                {
+                                                                                        "key": "categoriaId",
+                                                                                        "value": "{{category_id}}"
+                                                                                },
+                                                                                {
+                                                                                        "key": "estado",
+                                                                                        "value": "Sin Empezar"
+                                                                                },
+                                                                                {
+                                                                                        "key": "page",
+                                                                                        "value": "1"
+                                                                                },
+                                                                                {
+                                                                                        "key": "pageSize",
+                                                                                        "value": "10"
+                                                                                }
+                                                                        ]
+                                                                }
+                                                        },
+                                                        "status": "Internal Server Error",
+                                                        "code": 500,
+                                                        "_postman_previewlanguage": "json",
+                                                        "header": [
+                                                                {
+                                                                        "key": "Content-Type",
+                                                                        "value": "application/json"
+                                                                }
+                                                        ],
+                                                        "body": "{\n  \"code\": \"internal_error\",\n  \"message\": \"Error interno\"\n}"
+                                                }
+                                        ]
+                                },
 				{
 					"name": "Get Task by ID",
 					"request": {
