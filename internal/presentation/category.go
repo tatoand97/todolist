@@ -19,14 +19,6 @@ func NewCategoryHandlers(categoryService *useCase.CategoryService) *CategoryHand
 	return &CategoryHandlers{categoryService: categoryService}
 }
 
-func getUserID(c *gin.Context) uint {
-	v, _ := c.Get("userID")
-	if id, ok := v.(uint); ok {
-		return id
-	}
-	return 0
-}
-
 func (h *CategoryHandlers) Create(c *gin.Context) {
 	ctx, cancel := application.CtxTO(c.Request.Context())
 	defer cancel()
@@ -56,7 +48,7 @@ func (h *CategoryHandlers) Create(c *gin.Context) {
 }
 
 func (h *CategoryHandlers) List(c *gin.Context) {
-	categories, err := h.categoryService.List(c.Request.Context(), getUserID(c))
+	categories, err := h.categoryService.List(c.Request.Context())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -66,7 +58,7 @@ func (h *CategoryHandlers) List(c *gin.Context) {
 
 func (h *CategoryHandlers) Get(c *gin.Context) {
 	categoryID, _ := strconv.Atoi(c.Param("id"))
-	category, err := h.categoryService.Get(c.Request.Context(), uint(categoryID), getUserID(c))
+	category, err := h.categoryService.Get(c.Request.Context(), uint(categoryID))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
@@ -84,7 +76,7 @@ func (h *CategoryHandlers) Update(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	category := &entities.Category{ID: uint(categoryID), Name: req.Name, Description: req.Description, UserID: getUserID(c)}
+	category := &entities.Category{ID: uint(categoryID), Name: req.Name, Description: req.Description}
 	if err := h.categoryService.Update(c.Request.Context(), category); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -94,7 +86,7 @@ func (h *CategoryHandlers) Update(c *gin.Context) {
 
 func (h *CategoryHandlers) Delete(c *gin.Context) {
 	categoryID, _ := strconv.Atoi(c.Param("id"))
-	if err := h.categoryService.Delete(c.Request.Context(), uint(categoryID), getUserID(c)); err != nil {
+	if err := h.categoryService.Delete(c.Request.Context(), uint(categoryID)); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}

@@ -30,14 +30,14 @@ func (s *CategoryService) Update(ctx context.Context, category *entities.Categor
 	return s.repo.Update(ctx, category)
 }
 
-func (s *CategoryService) Delete(ctx context.Context, id uint, userID uint) error {
-	return s.repo.Delete(ctx, id, userID)
+func (s *CategoryService) Delete(ctx context.Context, id uint) error {
+	return s.repo.Delete(ctx, id)
 }
 
-func (s *CategoryService) Get(ctx context.Context, id uint, userID uint) (*entities.Category, error) {
-	return s.repo.Get(ctx, id, userID)
+func (s *CategoryService) Get(ctx context.Context, id uint) (*entities.Category, error) {
+	return s.repo.Get(ctx, id)
 }
 
-func (s *CategoryService) List(ctx context.Context, userID uint) ([]entities.Category, error) {
-	return s.repo.List(ctx, userID)
+func (s *CategoryService) List(ctx context.Context) ([]entities.Category, error) {
+	return s.repo.List(ctx)
 }

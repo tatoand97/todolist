@@ -22,7 +22,7 @@ func ValidateNewCategory(c *entities.Category) error {
 }
 
 func ValidateUpdate(c *entities.Category) error {
-	if c == nil || c.ID == 0 || c.UserID == 0 {
+	if c == nil || c.ID == 0 {
 		return domain.ErrInvalid
 	}
 	sanitizeCategory(c)

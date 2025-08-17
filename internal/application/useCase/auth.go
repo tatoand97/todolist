@@ -13,7 +13,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-const defaultAvatar = "/static/default.jpg"
+var defaultAvatar = "/static/default.jpg"
 
 type AuthService struct {
 	repo          interfaces.UserRepository
