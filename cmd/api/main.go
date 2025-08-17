@@ -22,7 +22,7 @@ func main() {
 		dsn = "postgres://postgres:postgres@localhost:5432/todolist?sslmode=disable"
 	}
 
-	m, err := migrate.New("file://internal/infrastructure/migrations", dsn)
+	m, err := migrate.New("file:///app/internal/infrastructure/migrations", dsn)
 	if err != nil {
 		log.Fatalf("migrate init failed: %v", err)
 	}
