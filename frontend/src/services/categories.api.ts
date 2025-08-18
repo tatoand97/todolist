@@ -1,6 +1,6 @@
 import { api } from "./baseApi";
 
-export interface Category { id: number|string; name: string; description?: string }
+export interface Category { id: number|string; nombre: string; descripcion?: string }
 
 export const categoriesApi = api.injectEndpoints({
   endpoints: (build) => ({
@@ -10,7 +10,7 @@ export const categoriesApi = api.injectEndpoints({
         result ? [...result.map(c => ({ type: "Category" as const, id: c.id })), { type: "Category", id: "LIST" }] :
                  [{ type: "Category", id: "LIST" }]
     }),
-    createCategory: build.mutation<Category, { name: string; description?: string }>({
+    createCategory: build.mutation<Category, { nombre: string; descripcion?: string }>({
       query: (data) => ({ url: "/categorias", method: "POST", body: data }),
       invalidatesTags: [{ type: "Category", id: "LIST" }]
     }),

@@ -23,11 +23,17 @@ func (h *CategoryHandlers) Create(c *gin.Context) {
 	ctx, cancel := application.CtxTO(c.Request.Context())
 	defer cancel()
 
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "usuario no autenticado"})
+		return
+	}
+
 	var req struct {
 		Name        string `json:"nombre" binding:"required"`
 		Description string `json:"descripcion"`
 	}
-	
+
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -36,6 +42,7 @@ func (h *CategoryHandlers) Create(c *gin.Context) {
 	category := &entities.Category{
 		Name:        strings.TrimSpace(req.Name),
 		Description: req.Description,
+		UserId:      userID.(uint),
 	}
 
 	if err := h.categoryService.Create(ctx, category); err != nil {

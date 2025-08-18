@@ -2,12 +2,12 @@ import { api } from "./baseApi";
 
 export type TaskStatus = "SIN_EMPEZAR"|"EMPEZADA"|"FINALIZADA";
 export interface Task {
-  id: number|string;
-  text: string;
+  idCategoria: number|string;
+  texto: string;
   createdAt: string;
   dueDate?: string|null;
   status: TaskStatus;
-  categoryId: number|string;
+  id: number|string;
   userId: number|string;
 }
 

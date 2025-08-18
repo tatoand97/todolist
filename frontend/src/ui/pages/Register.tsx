@@ -3,7 +3,7 @@ import { useRegisterMutation } from "../../services/auth.api";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function Register() {
-  const { register, handleSubmit } = useForm<{ username: string; password: string; image?: FileList }>();
+  const { register, handleSubmit } = useForm<{ username: string; password: string; image?: FileList; avatarUrl?: string }>();
   const [registerUser, { isLoading, error }] = useRegisterMutation();
   const nav = useNavigate();
 
@@ -20,6 +20,7 @@ export default function Register() {
         <input placeholder="Usuario" {...register("username")} />
         <input placeholder="Contraseña" type="password" {...register("password")} />
         <label>Imagen de perfil (opcional)<input type="file" accept="image/*" {...register("image")} /></label>
+        <label>URL de avatar (opcional)<input placeholder="avatarurl" {...register("avatarUrl")} /></label>
         <button disabled={isLoading}>Registrarme</button>
       </form>
       {error && <small style={{ color: "red" }}>Error al registrar</small>}
