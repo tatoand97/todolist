@@ -18,8 +18,27 @@ tags:
   - name: Usuarios
   - name: Categorías
   - name: Tareas
+  - name: Sistema
 
 paths:
+  /health:
+    get:
+      tags: [ Sistema ]
+      summary: Chequeo de salud
+      description: Verifica que el servicio está operativo.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   /usuarios:
     post:
       tags: [ Usuarios ]
@@ -60,6 +79,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   /usuarios/iniciar-sesion:
     post:
       tags: [ Autenticación ]
@@ -87,6 +108,8 @@ paths:
                     description: JWT Bearer
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   /usuarios/cerrar-sesion:
     post:
       tags: [ Autenticación ]
@@ -98,6 +121,8 @@ paths:
           description: Sesión cerrada (token invalidado/rotado)
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /categorias:
     get:
@@ -115,6 +140,8 @@ paths:
                 items: { $ref: '#/components/schemas/Categoria' }
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
     post:
       tags: [ Categorías ]
       summary: Crear categoría global
@@ -141,6 +168,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   /categorias/{id}:
     get:
       tags: [ Categorías ]
@@ -160,6 +189,8 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
     put:
       tags: [ Categorías ]
       summary: Actualizar categoría global
@@ -189,6 +220,8 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
     delete:
       tags: [ Categorías ]
       summary: Eliminar categoría global
@@ -203,6 +236,8 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /tareas:
     post:
@@ -227,6 +262,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /tareas/usuario:
     get:
@@ -271,6 +308,8 @@ paths:
                     type: integer
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /tareas/{id}:
     get:
@@ -291,6 +330,8 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
     put:
       tags: [ Tareas ]
       summary: Actualizar tarea
@@ -317,6 +358,8 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
     delete:
       tags: [ Tareas ]
       summary: Eliminar tarea
@@ -331,6 +374,8 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
 components:
   securitySchemes:
@@ -365,6 +410,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+    InternalServerError:
+      description: Error interno
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
 
   schemas:
     UsuarioRegistro:
@@ -378,10 +429,6 @@ components:
         password:
           type: string
           minLength: 6
-        profileImageUrl:
-          type: string
-          format: uri
-          description: Alternativa a subir archivo
     UsuarioPublico:
       type: object
       properties:

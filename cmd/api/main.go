@@ -13,6 +13,7 @@ import (
 	"gorm.io/gorm"
 
 	postgresrepo "todolist/internal/infrastructure/repository"
+	"todolist/internal/infrastructure/storage"
 	"todolist/internal/presentation"
 )
 
@@ -46,7 +47,8 @@ func main() {
 	taskRepo := postgresrepo.NewTaskRepository(db)
 
 	// Initialize services
-	authService := useCase.NewAuthService(userRepo, jwtSecret)
+	fileWriter := storage.NewStaticFileWriter("./static")
+	authService := useCase.NewAuthService(userRepo, fileWriter, jwtSecret)
 	categoryService := useCase.NewCategoryService(categoryRepo)
 	taskService := useCase.NewTaskService(taskRepo)
 

@@ -23,7 +23,7 @@ services:
       db:
         condition: service_healthy
     environment:
-      GIN_MODE: release
+      GIN_MODE: debug
       DATABASE_URL: postgres://postgres:postgres@db:5432/todolist?sslmode=disable
       JWT_SECRET: secret
       PORT: 8080

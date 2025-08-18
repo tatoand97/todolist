@@ -56,12 +56,31 @@ func (h *TaskHandlers) List(c *gin.Context) {
 	if stateParam := c.Query("estado"); stateParam != "" {
 		filter.State = &stateParam
 	}
-	var taskList, err = h.taskService.List(c.Request.Context(), getUserID(c), filter)
+	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
+	if err != nil || page < 1 {
+		page = 1
+	}
+	pageSize, err := strconv.Atoi(c.DefaultQuery("pageSize", "20"))
+	if err != nil || pageSize < 1 {
+		pageSize = 20
+	}
+	if pageSize > 200 {
+		pageSize = 200
+	}
+	filter.Page = page
+	filter.PageSize = pageSize
+
+	items, total, err := h.taskService.List(c.Request.Context(), getUserID(c), filter)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, taskList)
+	c.JSON(http.StatusOK, gin.H{
+		"items":    items,
+		"page":     page,
+		"pageSize": pageSize,
+		"total":    total,
+	})
 }
 
 func (h *TaskHandlers) Get(c *gin.Context) {
@@ -80,7 +99,7 @@ func (h *TaskHandlers) Update(c *gin.Context) {
 		Text       *string    `json:"texto"`
 		DueDate    *time.Time `json:"fechaTentativaFin"`
 		State      *string    `json:"estado"`
-		CategoryID *uint      `json:"idCategoria"`
+		CategoryID *uint      `json:"idCategoria,string"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
