@@ -1,0 +1,100 @@
+﻿PS D:\AzureDevOps\Go\todolist> docker-compose up --build
+[+] Running 12/12
+ ✔ db Pulled                                                                                                                                                                                                             17.9s
+   ✔ 9824c27679d3 Already exists                                                                                                                                                                                          0.0s
+   ✔ 61a7421693bd Pull complete                                                                                                                                                                                           0.6s
+   ✔ 51a939567803 Pull complete                                                                                                                                                                                           0.7s
+   ✔ a612d38c9b48 Pull complete                                                                                                                                                                                           0.8s
+   ✔ 901a9540064a Pull complete                                                                                                                                                                                           1.1s
+   ✔ 6c13c55b4b82 Pull complete                                                                                                                                                                                          14.2s
+   ✔ 0f940631c13f Pull complete                                                                                                                                                                                          14.3s
+   ✔ a15854d6fd91 Pull complete                                                                                                                                                                                          14.3s
+   ✔ 685be96195b7 Pull complete                                                                                                                                                                                          14.4s
+   ✔ ce414b3fa674 Pull complete                                                                                                                                                                                          14.4s
+   ✔ 6afcd9ec0fd9 Pull complete                                                                                                                                                                                          14.5s
+[+] Building 5.0s (22/31)
+ => [internal] load local bake definitions                                                                                                                                                                                0.0s
+ => => reading from stdin 646B                                                                                                                                                                                            0.0s
+ => [client internal] load build definition from Dockerfile                                                                                                                                                               0.1s
+ => => transferring dockerfile: 344B                                                                                                                                                                                      0.0s
+ => [api internal] load build definition from Dockerfile                                                                                                                                                                  0.1s
+ => => transferring dockerfile: 437B                                                                                                                                                                                      0.0s
+ => [api internal] load metadata for docker.io/library/alpine:3.19                                                                                                                                                        1.6s
+ => [api internal] load metadata for docker.io/library/golang:1.24-alpine                                                                                                                                                 0.9s
+ => [client internal] load metadata for docker.io/library/nginx:alpine                                                                                                                                                    0.9s
+ => [client internal] load metadata for docker.io/library/node:18-alpine                                                                                                                                                  0.9s
+ => [client internal] load .dockerignore                                                                                                                                                                                  0.1s
+ => => transferring context: 125B                                                                                                                                                                                         0.0s
+ => [client build 1/6] FROM docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e                                                                                      0.0s
+ => [client stage-1 1/3] FROM docker.io/library/nginx:alpine@sha256:2459838ed006e699c252db374550c91490068bbf3b35fa8b9d29bfe0e31b8b95                                                                                      0.0s
+ => [client internal] load build context                                                                                                                                                                                  0.1s
+ => => transferring context: 32.33kB                                                                                                                                                                                      0.0s
+ => CACHED [client build 2/6] WORKDIR /app                                                                                                                                                                                0.0s
+ => [client build 3/6] COPY package*.json ./                                                                                                                                                                              0.2s
+ => ERROR [client build 4/6] RUN npm ci --only=production                                                                                                                                                                 2.4s
+ => [api internal] load .dockerignore                                                                                                                                                                                     0.0s
+ => => transferring context: 2B                                                                                                                                                                                           0.0s
+ => [api internal] load build context                                                                                                                                                                                     0.1s
+ => => transferring context: 388.92kB                                                                                                                                                                                     0.1s
+ => [api stage-1 1/5] FROM docker.io/library/alpine:3.19@sha256:3be987e6cde1d07e873c012bf6cfe941e6e85d16ca5fc5b8bedc675451d2de67                                                                                          1.6s
+ => => resolve docker.io/library/alpine:3.19@sha256:3be987e6cde1d07e873c012bf6cfe941e6e85d16ca5fc5b8bedc675451d2de67                                                                                                      0.0s
+ => => sha256:f23794abfe89e369030e97c15f8fbeda474e57780fc03926511c172ce360715b 581B / 581B                                                                                                                                0.0s
+ => => sha256:1747dece94917ce1b0256ecd60138ce4deaea1bd35dcb6b2e8afe697dd2f5b71 3.42MB / 3.42MB                                                                                                                            1.0s
+ => => sha256:3be987e6cde1d07e873c012bf6cfe941e6e85d16ca5fc5b8bedc675451d2de67 8.08kB / 8.08kB                                                                                                                            0.0s
+ => => sha256:cc5c89e0981cd165d5fca56a4fea9de734e76800c61df61b61c52cc041a81f1b 1.02kB / 1.02kB                                                                                                                            0.0s
+ => => extracting sha256:1747dece94917ce1b0256ecd60138ce4deaea1bd35dcb6b2e8afe697dd2f5b71                                                                                                                                 0.2s
+ => CACHED [api build 1/6] FROM docker.io/library/golang:1.24-alpine@sha256:c8c5f95d64aa79b6547f3b626eb84b16a7ce18a139e3e9ca19a8c078b85ba80d                                                                              0.0s
+ => [api build 2/6] WORKDIR /src                                                                                                                                                                                          0.1s
+ => [api build 3/6] COPY go.mod go.sum ./                                                                                                                                                                                 0.1s
+ => CANCELED [api build 4/6] RUN go mod download                                                                                                                                                                          2.1s
+ => [api stage-1 2/5] WORKDIR /app                                                                                                                                                                                        0.1s
+------
+ > [client build 4/6] RUN npm ci --only=production:
+0.997 npm warn config only Use `--omit=dev` to omit dev dependencies from the install.
+2.232 npm error code EUSAGE
+2.232 npm error
+2.232 npm error The `npm ci` command can only install with an existing package-lock.json or
+2.232 npm error npm-shrinkwrap.json with lockfileVersion >= 1. Run an install with npm@5 or
+2.232 npm error later to generate a package-lock.json file, then try again.
+2.232 npm error
+2.232 npm error Clean install a project
+2.232 npm error
+2.232 npm error Usage:
+2.232 npm error npm ci
+2.232 npm error
+2.232 npm error Options:
+2.232 npm error [--install-strategy <hoisted|nested|shallow|linked>] [--legacy-bundling]
+2.232 npm error [--global-style] [--omit <dev|optional|peer> [--omit <dev|optional|peer> ...]]
+2.232 npm error [--include <prod|dev|optional|peer> [--include <prod|dev|optional|peer> ...]]
+2.232 npm error [--strict-peer-deps] [--foreground-scripts] [--ignore-scripts] [--no-audit]
+2.232 npm error [--no-bin-links] [--no-fund] [--dry-run]
+2.232 npm error [-w|--workspace <workspace-name> [-w|--workspace <workspace-name> ...]]
+2.232 npm error [-ws|--workspaces] [--include-workspace-root] [--install-links]
+2.232 npm error
+2.232 npm error aliases: clean-install, ic, install-clean, isntall-clean
+2.232 npm error
+2.232 npm error Run "npm help ci" for more info
+2.236 npm error A complete log of this run can be found in: /root/.npm/_logs/2025-08-17T04_45_44_853Z-debug-0.log
+------
+Dockerfile:5
+
+--------------------
+
+   3 |     WORKDIR /app
+
+   4 |     COPY package*.json ./
+
+   5 | >>> RUN npm ci --only=production
+
+   6 |     COPY . .
+
+   7 |     RUN npm run build
+
+--------------------
+
+target client: failed to solve: process "/bin/sh -c npm ci --only=production" did not complete successfully: exit code: 1
+
+
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/f55kb649asgxtuqyxzq8hxm68
+

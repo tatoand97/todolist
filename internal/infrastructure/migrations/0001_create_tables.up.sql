@@ -4,13 +4,14 @@ CREATE TABLE users
     username          TEXT NOT NULL UNIQUE,
     password_hash     TEXT NOT NULL,
     profile_image_url TEXT,
+    avatar_url        TEXT NOT NULL DEFAULT '/static/default.jpg'
 );
 
 CREATE TABLE categories
 (
     id          SERIAL PRIMARY KEY,
     name        TEXT    NOT NULL,
-    description TEXT,
+    description TEXT
 );
 
 CREATE TABLE tasks

@@ -14,6 +14,9 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - todolist-network
+
   api:
     build: .
     depends_on:
@@ -31,5 +34,27 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
+    networks:
+      - todolist-network
+
+  client:
+    build: ./client
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "3000:80"
+    networks:
+      - todolist-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
 volumes:
   db-data:
+
+networks:
+  todolist-network:
+    driver: bridge

@@ -19,7 +19,6 @@ func NewTaskHandlers(taskService *useCase.TaskService) *TaskHandlers {
 	return &TaskHandlers{taskService: taskService}
 }
 
-
 func getUserID(c *gin.Context) uint {
 	v, _ := c.Get("userID")
 	if id, ok := v.(uint); ok {
@@ -32,7 +31,7 @@ func (h *TaskHandlers) Create(c *gin.Context) {
 	var req struct {
 		Text       string     `json:"texto" binding:"required"`
 		DueDate    *time.Time `json:"fechaTentativaFin"`
-		CategoryID uint       `json:"idCategoria,string" binding:"required"` // <- clave
+		CategoryID uint       `json:"idCategoria" binding:"required"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
