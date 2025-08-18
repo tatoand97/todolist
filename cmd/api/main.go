@@ -23,7 +23,7 @@ func main() {
 		dsn = "postgres://postgres:postgres@localhost:5432/todolist?sslmode=disable"
 	}
 
-	m, err := migrate.New("file://internal/infrastructure/migrations", dsn)
+	m, err := migrate.New("file:///app/internal/infrastructure/migrations", dsn)
 	if err != nil {
 		log.Fatalf("migrate init failed: %v", err)
 	}
@@ -56,6 +56,18 @@ func main() {
 	r := gin.Default()
 
 	r.Static("/static", "./static")
+	r.Use(func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Origin, Authorization, Content-Type")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+		c.Next()
+	})
 
 	presentation.NewRouter(r, authService, categoryService, taskService, jwtSecret)
 
