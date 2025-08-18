@@ -47,7 +47,7 @@ export default function TaskForm({ defaultValues, onSaved }: { defaultValues?: P
       <label>Categoría
         <select {...register("categoryId")}>
           <option value="">Seleccione...</option>
-          {cats?.map(c => <option key={String(c.id)} value={String(c.id)}>{c.name}</option>)}
+          {cats?.map(c => <option key={String(c.id)} value={String(c.id)}>{c.nombre}</option>)}
         </select>
       </label>
       {errors.categoryId && <small style={{ color: "red" }}>{errors.categoryId.message}</small>}

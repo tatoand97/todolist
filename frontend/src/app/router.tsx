@@ -5,11 +5,41 @@ import Tasks from "../ui/pages/Tasks";
 import Categories from "../ui/pages/Categories";
 import TaskDetail from "../ui/pages/TaskDetail";
 import ProtectedRoute from "../ui/components/ProtectedRoute";
+import AppLayout from "../ui/layouts/AppLayout";
 
 export const router = createBrowserRouter([
-  { path: "/login", element: <Login/> },
-  { path: "/register", element: <Register/> },
-  { path: "/", element: <ProtectedRoute><Tasks/></ProtectedRoute> },
-  { path: "/categories", element: <ProtectedRoute><Categories/></ProtectedRoute> },
-  { path: "/tasks/:id", element: <ProtectedRoute><TaskDetail/></ProtectedRoute> }
+  { path: "/login", element: <Login /> },
+  { path: "/register", element: <Register /> },
+
+  // Rutas protegidas con Layout
+  {
+    path: "/",
+    element: (
+      <ProtectedRoute>
+        <AppLayout>
+          <Tasks />
+        </AppLayout>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/categories",
+    element: (
+      <ProtectedRoute>
+        <AppLayout>
+          <Categories />
+        </AppLayout>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/tasks/:id",
+    element: (
+      <ProtectedRoute>
+        <AppLayout>
+          <TaskDetail />
+        </AppLayout>
+      </ProtectedRoute>
+    ),
+  },
 ]);
