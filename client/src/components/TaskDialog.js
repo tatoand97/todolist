@@ -24,17 +24,17 @@ const TaskDialog = ({ open, onClose, onSave, task, categories }) => {
   useEffect(() => {
     if (task) {
       setFormData({
-        texto: task.Text || task.text || '',
-        fechaTentativaFin: (task.DueDate || task.due_date) ? (task.DueDate || task.due_date).split('T')[0] : '',
-        estado: task.State || task.state || 'Sin Empezar',
-        idCategoria: task.CategoryID || task.category_id || ''
+        texto: task.texto || '',
+        fechaTentativaFin: task.fechaTentativaFin ? task.fechaTentativaFin.split('T')[0] : '',
+        estado: task.estado || 'Sin Empezar',
+        idCategoria: task.categoriaId || ''
       });
     } else {
       setFormData({
         texto: '',
         fechaTentativaFin: '',
         estado: 'Sin Empezar',
-        idCategoria: categories.length > 0 ? (categories[0].ID || categories[0].id) : ''
+        idCategoria: categories.length > 0 ? categories[0].id : ''
       });
     }
   }, [task, categories, open]);
@@ -112,8 +112,8 @@ const TaskDialog = ({ open, onClose, onSave, task, categories }) => {
               label="Categoría"
             >
               {categories.map((category) => (
-                <MenuItem key={category.ID || category.id} value={category.ID || category.id}>
-                  {category.Name || category.name}
+                <MenuItem key={category.id} value={category.id}>
+                  {category.nombre}
                 </MenuItem>
               ))}
             </Select>

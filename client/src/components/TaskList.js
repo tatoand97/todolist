@@ -26,7 +26,7 @@ const TaskList = ({ tasks, categories, loading, onEdit, onDelete }) => {
 
   const getCategoryName = (categoryId) => {
     const category = categories.find(cat => cat.id === categoryId);
-    return category ? category.name : 'Sin categoría';
+    return category ? category.nombre : 'Sin categoría';
   };
 
   const formatDate = (dateString) => {
@@ -60,7 +60,7 @@ const TaskList = ({ tasks, categories, loading, onEdit, onDelete }) => {
       <List>
         {tasks.map((task, index) => (
           <ListItem
-            key={task.ID || task.id}
+            key={task.id}
             divider={index < tasks.length - 1}
             sx={{ py: 2 }}
           >
@@ -68,11 +68,11 @@ const TaskList = ({ tasks, categories, loading, onEdit, onDelete }) => {
               primary={
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                   <Typography variant="h6" component="span">
-                    {task.Text || task.text}
+                    {task.texto}
                   </Typography>
                   <Chip
-                    label={task.State || task.state}
-                    color={getStateColor(task.State || task.state)}
+                    label={task.estado}
+                    color={getStateColor(task.estado)}
                     size="small"
                   />
                 </Box>
@@ -80,13 +80,13 @@ const TaskList = ({ tasks, categories, loading, onEdit, onDelete }) => {
               secondary={
                 <Box>
                   <Typography variant="body2" color="textSecondary">
-                    Categoría: {getCategoryName(task.CategoryID || task.category_id)}
+                    Categoría: {getCategoryName(task.categoriaId)}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
-                    Fecha límite: {formatDate(task.DueDate || task.due_date)}
+                    Fecha límite: {formatDate(task.fechaTentativaFin)}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
-                    Creada: {formatDate(task.CreatedAt || task.created_at)}
+                    Creada: {formatDate(task.fechaCreacion)}
                   </Typography>
                 </Box>
               }
@@ -103,7 +103,7 @@ const TaskList = ({ tasks, categories, loading, onEdit, onDelete }) => {
               <IconButton
                 edge="end"
                 aria-label="delete"
-                onClick={() => onDelete(task.ID || task.id)}
+                onClick={() => onDelete(task.id)}
                 color="error"
               >
                 <DeleteIcon />

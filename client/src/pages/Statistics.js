@@ -47,7 +47,7 @@ const Statistics = () => {
     };
     
     tasks.forEach(task => {
-      const state = task.State || task.state;
+      const state = task.estado;
       if (stats.hasOwnProperty(state)) {
         stats[state]++;
       }
@@ -61,12 +61,12 @@ const Statistics = () => {
     const categoryMap = {};
     
     categories.forEach(cat => {
-      categoryMap[cat.ID || cat.id] = cat.Name || cat.name;
-      stats[cat.Name || cat.name] = 0;
+      categoryMap[cat.id] = cat.nombre;
+      stats[cat.nombre] = 0;
     });
     
     tasks.forEach(task => {
-      const categoryId = task.CategoryID || task.category_id;
+      const categoryId = task.categoriaId;
       const categoryName = categoryMap[categoryId];
       if (categoryName) {
         stats[categoryName]++;

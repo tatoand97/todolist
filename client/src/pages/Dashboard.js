@@ -58,7 +58,7 @@ const Dashboard = () => {
   const handleTaskSave = async (taskData) => {
     try {
       if (selectedTask) {
-        await tasksAPI.update(selectedTask.ID || selectedTask.id, taskData);
+        await tasksAPI.update(selectedTask.id, taskData);
       } else {
         await tasksAPI.create(taskData);
       }
@@ -91,9 +91,9 @@ const Dashboard = () => {
 
   const getTaskStats = () => {
     const total = tasks.length;
-    const completed = tasks.filter(task => (task.State || task.state) === 'Finalizada').length;
-    const inProgress = tasks.filter(task => (task.State || task.state) === 'Empezada').length;
-    const pending = tasks.filter(task => (task.State || task.state) === 'Sin Empezar').length;
+    const completed = tasks.filter(task => task.estado === 'Finalizada').length;
+    const inProgress = tasks.filter(task => task.estado === 'Empezada').length;
+    const pending = tasks.filter(task => task.estado === 'Sin Empezar').length;
     
     return { total, completed, inProgress, pending };
   };

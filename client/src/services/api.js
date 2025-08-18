@@ -37,6 +37,9 @@ export const authAPI = {
   
   logout: () => 
     api.post('/usuarios/cerrar-sesion'),
+  
+  updateProfile: (data) => 
+    api.put('/usuarios/perfil', data),
 };
 
 export const categoriesAPI = {

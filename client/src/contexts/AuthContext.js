@@ -26,9 +26,13 @@ export const AuthProvider = ({ children }) => {
   const login = async (username, password) => {
     try {
       const response = await authAPI.login(username, password);
-      const { token } = response.data;
+      const { token, user: userData } = response.data;
       localStorage.setItem('token', token);
-      setUser({ username, token });
+      setUser({ 
+        username: userData?.username || username, 
+        token,
+        avatarUrl: userData?.avatar_url || userData?.avatarUrl
+      });
       return { success: true };
     } catch (error) {
       return { 
@@ -61,11 +65,28 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const updateProfile = async (profileData) => {
+    try {
+      const response = await authAPI.updateProfile(profileData);
+      setUser(prev => ({ 
+        ...prev, 
+        avatarUrl: profileData.avatarUrl || response.data?.avatar_url 
+      }));
+      return { success: true };
+    } catch (error) {
+      return { 
+        success: false, 
+        error: error.response?.data?.error || 'Error al actualizar perfil' 
+      };
+    }
+  };
+
   const value = {
     user,
     login,
     register,
     logout,
+    updateProfile,
     loading,
   };
 
