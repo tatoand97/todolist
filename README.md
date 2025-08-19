@@ -1,5 +1,14 @@
 # ISIS-4426 Taller Nivelación 0 - Todo List API
 
+
+## 👥 Equipo de Desarrollo
+
+- **Ricardo Andres Leyva Osorio** - Developer
+- **Edda Camila Rodriguez Mojica** - Developer
+- **Cristian David Paredes Bravo** - Developer
+- **Andrea Carolina Cely Duarte** - Developer
+- **Juan Carlos Martinez Muñoz** - Developer
+
 ## 📋 Descripción
 
 API REST para gestión de tareas desarrollada en Go con arquitectura hexagonal. Permite a los usuarios registrarse, autenticarse y gestionar sus tareas organizadas por categorías.
@@ -491,11 +500,3 @@ graph TB
     API -.->|Health Check| API
     DB -.->|Health Check| DB
 ```
-
-## 👥 Equipo de Desarrollo
-
-- **Ricardo Andres Leyva Osorio** - Developer
-- **Edda Camila Rodriguez Mojica** - Developer
-- **Cristian David Paredes Bravo** - Developer
-- **Andrea Carolina Cely Duarte** - Developer
-- **Juan Carlos Martinez Muñoz** - Developer
