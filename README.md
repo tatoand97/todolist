@@ -495,7 +495,11 @@ flowchart TD
 
 ```mermaid
 graph TB
-    subgraph "Docker Compose Network"
+    subgraph Host
+        DE[Docker Engine]
+    end
+ 
+    subgraph "Docker Compose"
         subgraph "Client Container"
             NGINX[Nginx Server]
             REACT[React App]
@@ -532,9 +536,11 @@ graph TB
     DB --> VOL
     ADMIN --> DBPORT
     
-    API -.->|Health Check| API
-    DB -.->|Health Check| DB
-    NGINX -.->|Health Check| NGINX
+    DE -.->|Healthcheck (exec)| API
+    DE -.->|Healthcheck (exec)| DB
+    DE -.->|Healthcheck (exec)| NGINX
+    
+    API -.->|depends_on: db (healthy)| DB
 ```
 
 ## 👥 Equipo de Desarrollo
