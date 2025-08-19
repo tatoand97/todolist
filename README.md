@@ -461,6 +461,10 @@ flowchart TD
 
 ```mermaid
 graph TB
+    subgraph Host
+        DE[Docker Engine]
+    end
+
     subgraph "Docker Compose"
         subgraph "API Container"
             API[Go API Server]
@@ -479,7 +483,6 @@ graph TB
     
     subgraph "External"
         CLIENT[Cliente HTTP]
-        ADMIN[pgAdmin]
     end
     
     CLIENT --> PORT
@@ -487,10 +490,11 @@ graph TB
     API --> DBPORT
     DBPORT --> DB
     DB --> VOL
-    ADMIN --> DBPORT
-    
-    API -.->|Health Check| API
-    DB -.->|Health Check| DB
+
+    DE -. |Healthcheck (exec)| .-> API
+    DE -. |Healthcheck (exec)| .-> DB
+
+    API -. |depends_on: db (healthy)| .-> DB
 ```
 
 ## 👥 Equipo de Desarrollo
