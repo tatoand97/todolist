@@ -30,7 +30,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
         </button>
 
         {/* Brand */}
-        <Link to="/" className="group inline-flex items-center gap-2">
+        <Link to="/tasks" className="group inline-flex items-center gap-2">
           <div className="h-6 w-1 rounded bg-orange-600 group-hover:bg-orange-700" />
           <span className="text-lg font-bold tracking-tight text-gray-900">
             Go<span className="text-orange-600">Cloud</span>
@@ -40,7 +40,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
 
         {/* Navegación (desktop) */}
         <nav className="ml-4 hidden items-center gap-4 sm:flex">
-          <HeaderLink to="/">Tareas</HeaderLink>
+          <HeaderLink to="/tasks">Tareas</HeaderLink>
           <HeaderLink to="/categories">Categorías</HeaderLink>
           {/* agrega más: <HeaderLink to="/reportes">Reportes</HeaderLink> */}
         </nav>
@@ -112,7 +112,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
       {openMobile && (
         <div className="border-t border-gray-200 bg-white sm:hidden">
           <nav className="mx-auto max-w-7xl px-3 py-2">
-            <MobileLink to="/" onClick={() => setOpenMobile(false)}>Tareas</MobileLink>
+            <MobileLink to="/tasks" onClick={() => setOpenMobile(false)}>Tareas</MobileLink>
             <MobileLink to="/categories" onClick={() => setOpenMobile(false)}>Categorías</MobileLink>
           </nav>
         </div>

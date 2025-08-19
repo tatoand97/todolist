@@ -18,7 +18,7 @@ export default function Login() {
     const resp = await login(data).unwrap();
     dispatch(setAuth({ token: resp.token, user: resp.usuario ?? null }));
     if (resp.usuario) dispatch(setUser(resp.usuario));
-    nav("/");
+    nav("/tasks");
   };
 
   return (

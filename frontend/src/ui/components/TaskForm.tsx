@@ -7,27 +7,40 @@ import { useListCategoriesQuery } from "../../services/categories.api";
 const schema = z.object({
   text: z.string().min(1, "Texto requerido"),
   dueDate: z.string().optional().or(z.literal("")),
-  categoryId: z.string().min(1, "Categoría requerida")
+  categoryId: z.string().min(1, "Categoría requerida"),
 });
 type FormData = z.infer<typeof schema>;
 
-export default function TaskForm({ defaultValues, onSaved }: { defaultValues?: Partial<FormData & { id?: any }>, onSaved?: () => void }) {
+export default function TaskForm({
+  defaultValues,
+  onSaved,
+}: {
+  defaultValues?: Partial<FormData & { id?: any }>;
+  onSaved?: () => void;
+}) {
   const { data: cats } = useListCategoriesQuery();
-  const [createTask] = useCreateTaskMutation();
-  const [updateTask] = useUpdateTaskMutation();
+  const [createTask, { isLoading: creating }] = useCreateTaskMutation();
+  const [updateTask, { isLoading: updating }] = useUpdateTaskMutation();
 
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { text: "", dueDate: "", categoryId: "", ...defaultValues }
+    defaultValues: { text: "", dueDate: "", categoryId: "", ...defaultValues },
   });
+
+  const isEditing = Boolean((defaultValues as any)?.id);
+  const isBusy = isSubmitting || creating || updating;
 
   const onSubmit = async (data: FormData) => {
     const payload = {
-      text: data.text,
-      dueDate: data.dueDate ? new Date(data.dueDate).toISOString() : null,
-      categoryId: data.categoryId
+      texto: data.text,
+      fechaTentativaFin: data.dueDate ? new Date(data.dueDate).toISOString() : null,
+      idCategoria: data.categoryId,
     };
-    if ((defaultValues as any)?.id) {
+    if (isEditing) {
       await updateTask({ id: (defaultValues as any).id, ...payload }).unwrap();
     } else {
       await createTask(payload).unwrap();
@@ -36,23 +49,88 @@ export default function TaskForm({ defaultValues, onSaved }: { defaultValues?: P
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} style={{ display: "grid", gap: 8, maxWidth: 480 }}>
-      <label>Texto<input {...register("text")} /></label>
-      {errors.text && <small style={{ color: "red" }}>{errors.text.message}</small>}
+    <form onSubmit={handleSubmit(onSubmit)} className="grid max-w-xl gap-4">
+      {/* Texto */}
+      <div>
+        <label htmlFor="text" className="mb-1 block text-sm font-medium text-gray-700">
+          Texto de la tarea
+        </label>
+        <input
+          id="text"
+          placeholder="Ej. Preparar informe, llamar al cliente…"
+          {...register("text")}
+          aria-invalid={!!errors.text}
+          aria-describedby={errors.text ? "text-error" : undefined}
+          className={[
+            "w-full rounded-lg border bg-white px-3 py-2 text-gray-900 placeholder:text-gray-400 outline-none transition",
+            errors.text
+              ? "border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200"
+              : "border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200",
+          ].join(" ")}
+        />
+        {errors.text && (
+          <p id="text-error" className="mt-1 text-xs text-red-600">
+            {errors.text.message}
+          </p>
+        )}
+      </div>
 
-      <label>Fecha tentativa
-        <input type="date" {...register("dueDate")} />
-      </label>
+      {/* Fecha tentativa */}
+      <div>
+        <label htmlFor="dueDate" className="mb-1 block text-sm font-medium text-gray-700">
+          Fecha tentativa
+        </label>
+        <input
+          id="dueDate"
+          type="date"
+          {...register("dueDate")}
+          className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none transition
+                     focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
+        />
+      </div>
 
-      <label>Categoría
-        <select {...register("categoryId")}>
-          <option value="">Seleccione...</option>
-          {cats?.map(c => <option key={String(c.id)} value={String(c.id)}>{c.nombre}</option>)}
+      {/* Categoría */}
+      <div>
+        <label htmlFor="categoryId" className="mb-1 block text-sm font-medium text-gray-700">
+          Categoría
+        </label>
+        <select
+          id="categoryId"
+          {...register("categoryId")}
+          aria-invalid={!!errors.categoryId}
+          aria-describedby={errors.categoryId ? "cat-error" : undefined}
+          className={[
+            "w-full rounded-lg border bg-white px-3 py-2 text-gray-900 outline-none transition",
+            errors.categoryId
+              ? "border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200"
+              : "border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200",
+          ].join(" ")}
+        >
+          <option value="">Seleccione…</option>
+          {cats?.map((c: any) => (
+            <option key={String(c.id)} value={String(c.id)}>
+              {c.name ?? c.nombre}
+            </option>
+          ))}
         </select>
-      </label>
-      {errors.categoryId && <small style={{ color: "red" }}>{errors.categoryId.message}</small>}
+        {errors.categoryId && (
+          <p id="cat-error" className="mt-1 text-xs text-red-600">
+            {errors.categoryId.message}
+          </p>
+        )}
+      </div>
 
-      <button type="submit">{(defaultValues as any)?.id ? "Actualizar" : "Crear"} tarea</button>
+      {/* Acción */}
+      <div className="pt-2">
+        <button
+          type="submit"
+          disabled={isBusy}
+          className="inline-flex w-full items-center justify-center rounded-lg bg-orange-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition
+                     hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-300 disabled:cursor-not-allowed disabled:opacity-70"
+        >
+          {isEditing ? "Actualizar" : "Crear"} tarea
+        </button>
+      </div>
     </form>
   );
 }

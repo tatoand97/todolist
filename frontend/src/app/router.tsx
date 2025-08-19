@@ -8,12 +8,13 @@ import ProtectedRoute from "../ui/components/ProtectedRoute";
 import AppLayout from "../ui/layouts/AppLayout";
 
 export const router = createBrowserRouter([
+  { path: "/", element: <Login /> },
   { path: "/login", element: <Login /> },
   { path: "/register", element: <Register /> },
 
   // Rutas protegidas con Layout
   {
-    path: "/",
+    path: "/tasks",
     element: (
       <ProtectedRoute>
         <AppLayout>

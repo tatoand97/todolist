@@ -30,7 +30,7 @@ export default function Categories() {
         <h1 className="text-xl font-semibold text-gray-900">Categorías</h1>
         <nav className="flex items-center gap-2">
           <Link
-            to="/"
+            to="/tasks"
             className="rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900"
           >
             Volver a Tareas

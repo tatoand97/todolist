@@ -34,7 +34,7 @@ export default function TaskDetail() {
     return (
       <div className="mx-auto max-w-3xl p-4 sm:p-6">
         <Link
-          to="/"
+          to="/tasks"
           className="inline-flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900"
         >
           ← Volver
@@ -58,7 +58,7 @@ export default function TaskDetail() {
     <div className="mx-auto max-w-3xl p-4 sm:p-6">
       <div className="mb-4 flex items-center justify-between">
         <Link
-          to="/"
+          to="/tasks"
           className="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900"
         >
           ← Volver
@@ -97,7 +97,7 @@ export default function TaskDetail() {
         {/* Acciones rápidas */}
         <div className="mt-6 flex items-center gap-2">
           <Link
-            to="/"
+            to="/tasks"
             className="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
           >
             Volver al listado

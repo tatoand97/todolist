@@ -5,7 +5,7 @@ export interface Task {
   idCategoria: number|string;
   texto: string;
   createdAt: string;
-  dueDate?: string|null;
+  fechaTentativaFin?: string|null;
   status: TaskStatus;
   id: number|string;
   userId: number|string;
@@ -23,11 +23,11 @@ export const tasksApi = api.injectEndpoints({
       query: ({ id }) => ({ url: `/tareas/${id}`, method: "GET" }),
       providesTags: (_task, _e, arg) => [{ type: "Task", id: arg.id }]
     }),
-    createTask: build.mutation<Task, { text: string; dueDate?: string|null; categoryId: any }>({
+    createTask: build.mutation<Task, { texto: string; fechaTentativaFin?: string|null; idCategoria: any }>({
       query: (data) => ({ url: "/tareas", method: "POST", body: data }),
       invalidatesTags: [{ type: "Task", id: "LIST" }]
     }),
-    updateTask: build.mutation<Task, { id: any; text?: string; dueDate?: string|null; status?: TaskStatus }>({
+    updateTask: build.mutation<Task, { id: any; texto?: string; fechaTentativaFin?: string|null; idCategoria?: any; estado?: TaskStatus }>({
       query: ({ id, ...data }) => ({ url: `/tareas/${id}`, method: "PUT", body: data }),
       invalidatesTags: (_r, _e, arg) => [{ type: "Task", id: arg.id }, { type: "Task", id: "LIST" }]
     }),

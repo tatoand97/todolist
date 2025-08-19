@@ -127,9 +127,9 @@ export default function Tasks() {
                   <div className="flex shrink-0 items-center gap-2">
                     <select
                       className="rounded-lg border border-gray-300 bg-white px-2 py-1 text-sm text-gray-900 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
-                      value={t.status}
+                      value={t.estado}
                       onChange={async (e) => {
-                        await updTask({ id: t.id, status: e.target.value as any }).unwrap();
+                        await updTask({ id: t.id, estado: e.target.value as any }).unwrap();
                       }}
                     >
                       <option value="SIN_EMPEZAR">Sin empezar</option>
