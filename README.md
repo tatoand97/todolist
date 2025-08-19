@@ -242,7 +242,7 @@ todolist/
 ## 📊 Modelo de Base de Datos
 
 ```sql
-users (id, username, password_hash, profile_image_url, avatar_url)
+users (id, username, password_hash, profile_image_url)
 categories (id, name, description)
 tasks (id, text, created_at, due_date, state, category_id, user_id)
 ```
@@ -256,7 +256,6 @@ erDiagram
         varchar username UK
         varchar password_hash
         text profile_image_url
-        text avatar_url
     }
     
     CATEGORIES {

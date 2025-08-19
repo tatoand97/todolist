@@ -30,8 +30,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('token', token);
       setUser({ 
         username: userData?.username || username, 
-        token,
-        avatarUrl: userData?.avatar_url || userData?.avatarUrl
+        token
       });
       return { success: true };
     } catch (error) {
@@ -67,8 +66,7 @@ export const AuthProvider = ({ children }) => {
 
   const updateProfile = (profileData) => {
     setUser(prev => ({ 
-      ...prev, 
-      avatarUrl: profileData.avatarUrl 
+      ...prev
     }));
     return { success: true };
   };

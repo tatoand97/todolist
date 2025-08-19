@@ -18,17 +18,17 @@ INSERT INTO categories (name, description) VALUES
 
 -- Inserción de datos en la tabla de usuarios
 -- Contraseña original: dev123
-INSERT INTO users (username, password_hash, profile_image_url, avatar_url) VALUES
-    ('dev_user', '$2a$10$30tpwD81jsT.uMqVJPedLOe5kC6DKRGuYj10soW29/y9YfZVGXxAC', '/static/default.jpg', '/static/default.jpg');
+INSERT INTO users (username, password_hash, profile_image_url) VALUES
+    ('dev_user', '$2a$10$30tpwD81jsT.uMqVJPedLOe5kC6DKRGuYj10soW29/y9YfZVGXxAC', '/static/default.jpg');
 -- Contraseña original: test_password
-INSERT INTO users (username, password_hash, profile_image_url, avatar_url) VALUES
-    ('test_user', '$2a$10$X2QtzEhqGimDnUjndNmclO65kjfKwpcP5jkoGadY.LTgD5FuY02wO', '/static/default.jpg', '/static/default.jpg');
+INSERT INTO users (username, password_hash, profile_image_url) VALUES
+    ('test_user', '$2a$10$X2QtzEhqGimDnUjndNmclO65kjfKwpcP5jkoGadY.LTgD5FuY02wO', '/static/default.jpg');
 -- Contraseña original: admin_pass
-INSERT INTO users (username, password_hash, profile_image_url, avatar_url) VALUES
-    ('admin', '$2a$10$k/m6vKHDoiBWUKb5Ar9Esun3JnNRF25/0B1.YtNmkXZwWCE4ZKeo6', '/static/default.jpg', '/static/default.jpg');
+INSERT INTO users (username, password_hash, profile_image_url) VALUES
+    ('admin', '$2a$10$k/m6vKHDoiBWUKb5Ar9Esun3JnNRF25/0B1.YtNmkXZwWCE4ZKeo6', '/static/default.jpg');
 -- Contraseña original: user_pass4
-INSERT INTO users (username, password_hash, profile_image_url, avatar_url) VALUES
-    ('user4', '$2a$10$cGgNhgezLQA3Wm35.QMB5.y4/PwLGF4ABgrBkI1zQ/H5Z7F5jNs66', '/static/default.jpg', '/static/default.jpg');
+INSERT INTO users (username, password_hash, profile_image_url) VALUES
+    ('user4', '$2a$10$cGgNhgezLQA3Wm35.QMB5.y4/PwLGF4ABgrBkI1zQ/H5Z7F5jNs66', '/static/default.jpg');
 
 -- Inserción de tareas para el 'dev_user' (ID 1)
 INSERT INTO tasks (text, state, user_id, category_id, due_date) VALUES
