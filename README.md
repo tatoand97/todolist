@@ -136,19 +136,14 @@ flowchart LR
 ## 🐳 Ejecución con Docker (Recomendado)
 
 ```bash
-# Construir y ejecutar todos los servicios (Backend + Frontend + DB)
+# Construir y ejecutar todos los servicios
 docker-compose up --build
 
 # Ejecutar en background
 docker-compose up -d
 
-# Ver logs de todos los servicios
-docker-compose logs -f
-
-# Ver logs específicos
-docker-compose logs -f api     # Backend
-docker-compose logs -f client  # Frontend
-docker-compose logs -f db      # Base de datos
+# Ver logs
+docker-compose logs -f api
 
 # Parar servicios
 docker-compose down
@@ -156,11 +151,6 @@ docker-compose down
 # Limpiar volúmenes
 docker-compose down -v
 ```
-
-### Acceso a la Aplicación
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:8080
-- **Base de datos**: localhost:5432
 
 ## 🔧 Ejecución Local
 
@@ -211,8 +201,7 @@ todolist/
 │   │   ├── repository/                # Implementaciones GORM
 │   │   └── migrations/                # Migraciones SQL
 │   └── presentation/                  # Handlers HTTP
-├── client/                            # Frontend React con Material UI
-│   ├── src/pages/Statistics.js       # Vista de estadísticas con gráficos
+├── client/todolist/                   # Frontend Angular (opcional)
 ├── docker-compose.yml                 # Orquestación de servicios
 ├── Dockerfile                         # Imagen de la API
 ├── openapi.yaml                       # Documentación OpenAPI
@@ -291,9 +280,9 @@ erDiagram
 ```
 
 ### Estados de Tareas
-- `Sin Empezar` - Estado inicial (filtro rojo)
-- `Empezada` - Tarea en progreso (filtro naranja)
-- `Finalizada` - Tarea completada (filtro verde)
+- `Sin Empezar` - Estado inicial
+- `Empezada` - Tarea en progreso  
+- `Finalizada` - Tarea completada
 
 ## 🔐 Seguridad
 
@@ -428,34 +417,15 @@ docker ps
 docker-compose down -v && docker-compose up --build
 ```
 
-## 🌐 Frontend React
+## 🌐 Frontend (Opcional)
 
-El proyecto incluye un cliente web React con Material UI en `client/`.
+El proyecto incluye un cliente Angular en `client/todolist/` para interfaz web.
 
-### Desarrollo Local
 ```bash
-cd client
+cd client/todolist
 npm install
-npm start  # http://localhost:3000
+ng serve
 ```
-
-### Producción (Docker)
-```bash
-# Se despliega automáticamente con docker-compose
-docker-compose up --build
-```
-
-### Características del Frontend
-- **React 18** con Material UI
-- **Autenticación JWT** integrada
-- **Dashboard** con estadísticas básicas y filtros dinámicos
-- **Vista de estadísticas** con gráficos de barras y circulares CSS
-- **CRUD completo** de tareas y categorías con validaciones
-- **Filtros** por estado y categoría con recarga automática
-- **Visualización de datos** sin dependencias externas
-- **Responsive design**
-- **Nginx** como servidor web en producción
-- **Proxy reverso** para API calls
 
 ## 🔄 Migraciones
 
@@ -483,10 +453,6 @@ flowchart TD
 - **Arquitectura Hexagonal**: Separación clara de responsabilidades
 - **Inyección de Dependencias**: Servicios desacoplados
 - **Migraciones Automáticas**: Base de datos siempre actualizada
-- **Validaciones de Estado**: Estados controlados en backend y frontend
-- **Filtros Dinámicos**: Recarga automática de datos al cambiar filtros
-- **Gráficos CSS**: Visualizaciones sin librerías externas (barras y circulares)
-- **Corrección de Bugs**: Carga correcta de categorías y serialización JSON
 - **Health Checks**: Monitoreo de servicios
 - **Contenedorización**: Despliegue simplificado
 - **Documentación OpenAPI**: API bien documentada
@@ -495,20 +461,10 @@ flowchart TD
 
 ```mermaid
 graph TB
-    subgraph Host
-        DE[Docker Engine]
-    end
- 
     subgraph "Docker Compose"
-        subgraph "Client Container"
-            NGINX[Nginx Server]
-            REACT[React App]
-            CLIENTPORT[":80"]
-        end
-        
         subgraph "API Container"
             API[Go API Server]
-            APIPORT[":8080"]
+            PORT[":8080"]
         end
         
         subgraph "DB Container"
@@ -521,26 +477,20 @@ graph TB
         end
     end
     
-    subgraph "External Access"
-        USER[Usuario]
-        ADMIN[Admin/pgAdmin]
+    subgraph "External"
+        CLIENT[Cliente HTTP]
+        ADMIN[pgAdmin]
     end
     
-    USER --> CLIENTPORT
-    CLIENTPORT --> NGINX
-    NGINX --> REACT
-    NGINX -.->|/api/*| APIPORT
-    APIPORT --> API
+    CLIENT --> PORT
+    PORT --> API
     API --> DBPORT
     DBPORT --> DB
     DB --> VOL
     ADMIN --> DBPORT
     
-    DE -.->|Healthcheck (exec)| API
-    DE -.->|Healthcheck (exec)| DB
-    DE -.->|Healthcheck (exec)| NGINX
-    
-    API -.->|depends_on: db (healthy)| DB
+    API -.->|Health Check| API
+    DB -.->|Health Check| DB
 ```
 
 ## 👥 Equipo de Desarrollo

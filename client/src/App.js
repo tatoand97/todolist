@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Statistics from './pages/Statistics';
+import Categories from './pages/Categories';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -30,6 +31,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Statistics />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/categories" 
+            element={
+              <ProtectedRoute>
+                <Categories />
               </ProtectedRoute>
             } 
           />

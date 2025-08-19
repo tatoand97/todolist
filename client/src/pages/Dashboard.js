@@ -106,13 +106,21 @@ const Dashboard = () => {
         <Typography variant="h4" component="h1">
           Dashboard de Tareas
         </Typography>
-        <Button
-          variant="outlined"
-          startIcon={<BarChartIcon />}
-          onClick={() => navigate('/statistics')}
-        >
-          Ver Estadísticas
-        </Button>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Button
+            variant="outlined"
+            startIcon={<BarChartIcon />}
+            onClick={() => navigate('/statistics')}
+          >
+            Estadísticas
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={() => navigate('/categories')}
+          >
+            Categorías
+          </Button>
+        </Box>
       </Box>
 
       {error && (
