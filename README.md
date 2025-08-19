@@ -3,11 +3,11 @@
 
 ## 👥 Equipo de Desarrollo
 
-- **Ricardo Andres Leyva Osorio** - Developer
-- **Edda Camila Rodriguez Mojica** - Developer
-- **Cristian David Paredes Bravo** - Developer
-- **Andrea Carolina Cely Duarte** - Developer
-- **Juan Carlos Martinez Muñoz** - Developer
+- **Ricardo Andres Leyva Osorio** - r.leyva@uniandes.edu.co - Developer
+- **Edda Camila Rodriguez Mojica** - ec.rodriguez@uniandes.edu.co - Developer
+- **Cristian David Paredes Bravo** - c.paredesb@uniandes.edu.co - Developer
+- **Andrea Carolina Cely Duarte** - a.celyd@uniandes.edu.co - Developer
+- **Juan Carlos Martinez Muñoz** - jc.martinezm1@uniandes.edu.co - Developer
 
 ## 📋 Descripción
 
