@@ -65,20 +65,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const updateProfile = async (profileData) => {
-    try {
-      const response = await authAPI.updateProfile(profileData);
-      setUser(prev => ({ 
-        ...prev, 
-        avatarUrl: profileData.avatarUrl || response.data?.avatar_url 
-      }));
-      return { success: true };
-    } catch (error) {
-      return { 
-        success: false, 
-        error: error.response?.data?.error || 'Error al actualizar perfil' 
-      };
-    }
+  const updateProfile = (profileData) => {
+    setUser(prev => ({ 
+      ...prev, 
+      avatarUrl: profileData.avatarUrl 
+    }));
+    return { success: true };
   };
 
   const value = {

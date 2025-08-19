@@ -29,22 +29,19 @@ const ProfileDialog = ({ open, onClose }) => {
     }
   }, [open, user]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
     setSuccess('');
 
-    const result = await updateProfile({ avatarUrl });
+    // Actualizar avatar solo localmente
+    updateProfile({ avatarUrl });
+    setSuccess('Avatar actualizado correctamente');
     
-    if (result.success) {
-      setSuccess('Perfil actualizado correctamente');
-      setTimeout(() => {
-        onClose();
-      }, 1500);
-    } else {
-      setError(result.error);
-    }
+    setTimeout(() => {
+      onClose();
+    }, 1500);
     
     setLoading(false);
   };
