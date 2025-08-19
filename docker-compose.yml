@@ -31,5 +31,17 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
+  
+  frontend:
+    build:
+      context: ./client-react
+      dockerfile: Dockerfile
+    ports:
+      - "8081:80"
+    restart: unless-stopped
+    # Necesario en Linux para que host.docker.internal resuelva al host
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
 volumes:
   db-data:
