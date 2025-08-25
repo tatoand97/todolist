@@ -46,7 +46,10 @@ jobs:
 
       - name: List directory contents
         run: | 
+          ls
           ls -R
+          ls -ltr
+          ls -la
 
       - name: Analyze with SonarCloud
 
